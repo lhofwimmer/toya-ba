@@ -30,6 +30,8 @@ function add(lhs: int, rhs: int) -> int {
 
 Der Funktionskörper beinhaltet eine beliebige Menge an Statements und Ausdrücken. Hat eine Funktion einen Rückgabewert, so kann mit \texttt{return} ein nachfolgender Ausdruck rückgegeben werden. Das Schlüsselwort \texttt{return} ist jedoch optional: Wenn das letzte Statement gleichzeitig ein Ausdruck und vom gefordertem Typen ist, dann wird automatisch dieser Ausdruck retourniert. Hierbei ist jedoch aufzupassen, dass die Leserlichkeit erhalten bleibt.
 
+Funktionen werden mit dem Syntax \texttt{<funcname>(parameter*)} aufgerufen und sind vom Rückgabetypen der aufgerufenen Funktion. Für jeden Parameter kann jeder beliebige Ausdruck eingesetzt werden, solange der Ist- und Solltyp übereinstimmt.
+
 \section{Statements}
 
 Statements sind Programmanweisungen, die keinen Wert zurückgeben. Dazu gehören Variablendeklaration und -zuweisung, For-Schleifen und Return-Anweisungen.
@@ -59,12 +61,25 @@ int result = someFunction();
 
 Der Name einer Variable darf nur einmal im eigenen Scope oder Elternscope verwendet werden, da es ansonsten zu Unklarheiten kommen kann, welche von mehreren Variablen nun gemeint ist. Auf die Frage, was sich hinter einem Scope verbiergt, wird näher im Kapitel \ref{cha:implementation} eingegangen. Ein Name darf aus beliebig vielen Groß- und Kleinbuchstaben und Unterstrichen bestehen. 
 
+\subsection{Arrays}
+
+Arrays sind eine eindimensionale Liste von einem bestimmten Typen mit einer fixen Länge, welche bei der Deklaration des Arrays angegeben wird und sich über die Lebensdauer der Variable nicht mehr ändert. Zuweisungen und Deklarationen unterscheiden sich nur leicht von nicht-Array Variablen. Der Hauptunterschied dabei besteht darin, dass die Länge bei der Deklaration und der Index bei der Zuweisung angegeben werden muss.
+
+Arrays werden mit dem Syntax \texttt{var <name> = new <typ>[int-Ausdruck]} deklariert. Mit \texttt{<name>[int-Ausdruck] = Ausdruck} wird ein neuer Wert auf einen Index geschrieben.
+
+\subsection{For-Schleifen}
+
 \section{Kommentare}
 
-\textit{Toya} erlaubt die Erstellung von Kommentaren. Ein Kommentar beginnt mit einem doppelten Schrägstrich \texttt{//}; alle weiteren Zeichen in dieser Zeile -- bis zum Zeilenumbruch -- ignoriert der Parser.
-
-
 \section{Ausdrücke}
+
+\subsection{Arithmetik}
+
+\subsection{Boolsche Logik}
+
+\subsection{If-Ausdrücke}
+
+\textit{Toya} erlaubt die Erstellung von Kommentaren. Ein Kommentar beginnt mit einem doppelten Schrägstrich \texttt{//}; alle weiteren Zeichen in dieser Zeile -- bis zum Zeilenumbruch -- ignoriert der Parser.
 
 - introduction von toya (grundsätzliche features, "auf diese wird in diesem Kapitel noch näher eingegangen")
 - namenserklärung
