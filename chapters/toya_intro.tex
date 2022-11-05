@@ -1,0 +1,80 @@
+\chapter{Die Programmiersprache toya}
+\label{cha:toya}
+
+\textit{Toya} ist eine stark typisierte, turing-vollständige Programmiersprache für die Java Virtual Machine mit einem Fokus auf Simplizität. Der Syntax ist, wie C\# oder Java zum Beispiel, stark an C angelehnt. Auf den Syntax wird in diesem Kapitel bei der näheren Behandlung der einzelnen Komponenten der Sprache eingegangen. 
+
+\begin{CJK}{UTF8}{ipxm}
+Der Name \textit{toya}, in Anlehnung an Java und Kotlin, findet seinen Ursprung bei einer Insel. Dabei handelt es sich konkret um 洞爺湖 (Tōya-ko), einen Kratersee im Norden Japans, der wiederum die Insel 中島 (Nakajima) beinhaltet. Von Tōya-ko leitet sich dann der Name \textit{toya}.
+\end{CJK}
+
+Grundsätzlich folgt toya imperativen Programmierparadigmen. Ein toya-Programm besteht aus einer Menge an Funktionen und Variablen, wobei, wie in Java eine \texttt{main} Funktion zum Programmeinstieg benötigt wird. Funktionen beinhalten verschiedene  Klassen gibt es keine; bei der Kompilation werden aber alle Programmteile in eine \texttt{Main} Klasse zusammengefasst, da jede \textit{.class} Datei genau eine Klasse beinhalten muss. Sollte die \texttt{main} Funktion nicht vorhanden sein, so wird eine Exception während des Parsens geworfen. Variablen, die außerhalb von Funktionen definiert werden, können global verwendet werden. Global in diesem Kontext bedeutet, dass Variablen in allen Funktionen des Programms verwendet werden können. 
+
+\section{Typen}
+
+\textit{Toya} stellt insgesamt 5 Typen und deren Array-Gegenstücke zur Verfügung. Diese sind \texttt{boolean}, \texttt{int}, \texttt{char}, \texttt{double} und \texttt{string}, wobei hierbei \texttt{int}, \texttt{boolean} und \texttt{string} eindeutig die wichtigsten sind, da jeder dieser Typen in unterschiedlichen Domänen seine Verwendung findet. So werden boolean  Das erstellen weiterer Typen ist nicht möglich.
+
+Array-Typen werden über den allgemein bekannten Suffix `\texttt{[]}' deklariert. So ist zum Beispiel der Typ eines String-Arrays als \texttt{string[]} zu schreiben. Die JVM bietet zusätzlich noch die Datentypen \texttt{byte}, \texttt{short}, \texttt{long} und \texttt{float} an, aber weil alle dieser Typen redundant in ihrem Verwendungszweck sind, kommen diese nicht in \textit{toya} vor, da der Sinn von \textit{toya} nicht die vollständige Ausschöpfung aller JVM-Features ist, sondern die explorative Implementierung einer Programmiersprache, wofür nicht alle Datentypen benötigt werden. Der \texttt{returnAddress} Typ wird hier außer acht gelassen, weil dieser nur JVM-interne Relevanz hat.
+
+Integer besitzt einen Wertebereich von $-2^{31}$ bis $2^{31} - 1$; Double folgt der IEEE 754 Spezifikation: 1 Bit für das Vorzeichen 11 Bit für den Exponenten und 52 Bit für die Mantisse. Boolean kann die Werte \texttt{true} und \texttt{false} annehmen. \texttt{True} wird intern als $1$ gehandhabt, \texttt{false} als 0. Die JVM besitzt keinen nativen String Typen, da dieser als Referenzwert gehandhabt wird. Da \textit{toya} keine Erstellung von Typen erlaubt, sind die einzigen Referenztypen String und Arrays. Die Bytecode-Generierung \textit{toya's} unterscheidet immer zwischen Arrays und nicht-Arrays, wenn es um die Auswahl der richtigen Opcodes geht, dadurch ergibt sich, dass eine Referenz, welche kein Array ist, immer ein String sein muss. Strings werden als Literale via doppelte Anführungszeichen definiert. So ist ein Hello World String als \texttt{``Hello World''} anzugeben.
+
+\section{Funktionen}
+
+Funktionen sind die zentrale Komponente von \textit{toya} und beinhalten die Programmlogik.
+Sie bestehen aus einem Funktionskörper und der Funktionssignatur. Die Funktionssignatur beinhaltet Name der Funktion, Parameter und Rückgabewert. Der Name ist das einzig verpflichtende hierbei; Parameter und Rückgabewert sind rein optional. Hat eine Funktion keinen Rückgabewert, so ist in der Funktion der Pfeil, als auch der nachfolgende Typ wegzulassen.
+
+\begin{ToyaCode}[numbers=none, caption={Eine typische Funktion unter toya.}]
+function add(lhs: int, rhs: int) -> int {
+    lhs + rhs
+}
+\end{ToyaCode}
+
+Der Funktionskörper beinhaltet eine beliebige Menge an Statements und Ausdrücken. Hat eine Funktion einen Rückgabewert, so kann mit \texttt{return} ein nachfolgender Ausdruck rückgegeben werden. Das Schlüsselwort \texttt{return} ist jedoch optional: Wenn das letzte Statement gleichzeitig ein Ausdruck und vom gefordertem Typen ist, dann wird automatisch dieser Ausdruck retourniert. Hierbei ist jedoch aufzupassen, dass die Leserlichkeit erhalten bleibt.
+
+\section{Statements}
+
+Statements sind Programmanweisungen, die keinen Wert zurückgeben. Dazu gehören Variablendeklaration und -zuweisung, For-Schleifen und Return-Anweisungen.
+
+\subsection{Variablen}
+\textit{Toya} erlaubt der Nutzerin die Erstellung von Variablen in Funktionen und auf globaler Ebene. Der Syntax dafür lautet \texttt{var <name> = <ausdruck>}; die explizite Angabe eines Typens ist nicht möglich. Stattdessen inferiert der Compiler anhand bekannter Typinformation des zu evaluierenden Ausdrucks den Typen und weist diesen Typen der Variable zu. Dieser Typ bleibt über die gesamte Lebensdauer der Variable gleich. Sobald der Typ einer Variable einmal fixiert ist, so kann dieser Typ nicht mehr geändert werden. Initialisiert man also eine Variable mithilfe eines Ausdrucks, der zu \texttt{int} evaluiert, so ist die Variable bis zur Vernichtung durch den Garbage Collector vom Typen \texttt{int}. Eine getrennte Deklaration und Initialisierung ist nicht möglich.
+
+Abgesehen von typentheoretischer Relevanz bietet die Verwendung des Schlüsselwortes \texttt{var} einige Vorteile als auch Nachteile für Verwenderinnen von \textit{toya}. Da \texttt{var} eine Vielzahl von verschiedenen Typen ersetzt, erleichtert es die Schreibarbeit für Programmiererinnen ungemein. Robert C. Martin sagt jedoch in seinem nominalen Werk \textit{A handbook of agile software craftmanship} ``Code is more read than it is written.''. Daraus folgt, dass die Lesbarkeit wichtiger als \textit{Schreibbarkeit} von Code ist und hierbei zeigen sich dann auch die Schwächen.
+
+Ohne einer modernen Entwicklungsumgebung, welche via dem User-Interfaces Hinweise auf die Typisierung gibt, kann die Entwicklerin nur über den konkreten Typen Vermutungen anstellen. Aufgrund der geringen Anzahl an Typen in \textit{toya} ist das Fehlen von Typhinweisen jedoch vernachlässigbar. Vergleicht man nun die Variablendeklaration und Initialisierung mit Java, so ist zu erkennen, dass bei der Initialisierung via Literalen die Verwendung von \texttt{var} kein Problem darstellt. Will man einer Variable den retournierten Wert einer Funktion zuweisen, so können hier aber Schwierigkeiten hinsichtlich Schlussfolgerungen auftreten. Daher ist die bewusste und intelligente Vergabe von Variablennamen essenziell.
+
+\begin{ToyaCode}[numbers=none, caption={Variablendeklaration in toya}]
+var number = 123
+var word = "Hello World"
+var value = 123.456
+var bool = true
+var result = someFunction()
+\end{ToyaCode}
+
+\begin{JavaCode}[numbers=none,caption={Variablendeklaration in Java (vor Version 10)}]
+int number = 123;
+String word = "Hello World";
+double value = 123.456;
+boolean bool = true;
+int result = someFunction();
+\end{JavaCode}
+
+Der Name einer Variable darf nur einmal im eigenen Scope oder Elternscope verwendet werden, da es ansonsten zu Unklarheiten kommen kann, welche von mehreren Variablen nun gemeint ist. Auf die Frage, was sich hinter einem Scope verbiergt, wird näher im Kapitel \ref{cha:implementation} eingegangen. Ein Name darf aus beliebig vielen Groß- und Kleinbuchstaben und Unterstrichen bestehen. 
+
+\section{Kommentare}
+
+\textit{Toya} erlaubt die Erstellung von Kommentaren. Ein Kommentar beginnt mit einem doppelten Schrägstrich \texttt{//}; alle weiteren Zeichen in dieser Zeile -- bis zum Zeilenumbruch -- ignoriert der Parser.
+
+
+\section{Ausdrücke}
+
+- introduction von toya (grundsätzliche features, "auf diese wird in diesem Kapitel noch näher eingegangen")
+- namenserklärung
+- Funktionen
+- Typen
+- Variablen
+- Expressions:
+    - Arithmetik
+    - Boolean
+    - If
+    - Arrays
+- Statements
+    - For Statement
