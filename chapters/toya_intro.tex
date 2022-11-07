@@ -11,11 +11,13 @@ Grundsätzlich folgt toya imperativen Programmierparadigmen. Ein toya-Programm b
 
 \section{Typen}
 
-\textit{Toya} stellt insgesamt 5 Typen und deren Array-Gegenstücke zur Verfügung. Diese sind \texttt{boolean}, \texttt{int}, \texttt{char}, \texttt{double} und \texttt{string}, wobei hierbei \texttt{int}, \texttt{boolean} und \texttt{string} eindeutig die wichtigsten sind, da jeder dieser Typen in unterschiedlichen Domänen seine Verwendung findet. So werden boolean  Das erstellen weiterer Typen ist nicht möglich.
+\textit{Toya} stellt insgesamt 5 Typen und deren Array-Gegenstücke zur Verfügung. Diese sind \texttt{boolean}, \texttt{int}, \texttt{double} und \texttt{string}, wobei hierbei \texttt{int}, \texttt{boolean} und \texttt{string} eindeutig die wichtigsten sind, da jeder dieser Typen in unterschiedlichen Domänen seine Verwendung findet. So werden boolean  Das erstellen weiterer Typen ist nicht möglich.
 
 Array-Typen werden über den allgemein bekannten Suffix `\texttt{[]}' deklariert. So ist zum Beispiel der Typ eines String-Arrays als \texttt{string[]} zu schreiben. Die JVM bietet zusätzlich noch die Datentypen \texttt{byte}, \texttt{short}, \texttt{long} und \texttt{float} an, aber weil alle dieser Typen redundant in ihrem Verwendungszweck sind, kommen diese nicht in \textit{toya} vor, da der Sinn von \textit{toya} nicht die vollständige Ausschöpfung aller JVM-Features ist, sondern die explorative Implementierung einer Programmiersprache, wofür nicht alle Datentypen benötigt werden. Der \texttt{returnAddress} Typ wird hier außer acht gelassen, weil dieser nur JVM-interne Relevanz hat.
 
 Integer besitzt einen Wertebereich von $-2^{31}$ bis $2^{31} - 1$; Double folgt der IEEE 754 Spezifikation: 1 Bit für das Vorzeichen 11 Bit für den Exponenten und 52 Bit für die Mantisse. Boolean kann die Werte \texttt{true} und \texttt{false} annehmen. \texttt{True} wird intern als $1$ gehandhabt, \texttt{false} als 0. Die JVM besitzt keinen nativen String Typen, da dieser als Referenzwert gehandhabt wird. Da \textit{toya} keine Erstellung von Typen erlaubt, sind die einzigen Referenztypen String und Arrays. Die Bytecode-Generierung \textit{toya's} unterscheidet immer zwischen Arrays und nicht-Arrays, wenn es um die Auswahl der richtigen Opcodes geht, dadurch ergibt sich, dass eine Referenz, welche kein Array ist, immer ein String sein muss. Strings werden als Literale via doppelte Anführungszeichen definiert. So ist ein Hello World String als \texttt{``Hello World''} anzugeben.
+
+Gewisse Sprachen, wie Java oder Kotlin konvertieren automatisch Typen, wenn diese zum Beispiel in arithmetischen Operationen gemischt werden. So wird zum Beispiel eine Addition, die aus einem Integer- und Double-Wert besteht, automatisch zum Typen Double konvertiert. Dadurch ermöglichen diese Programmiersprachen eine gewisse Flexibilität, selbst bei statischer Typisierung. Diese automatische Konvertierung besitzt \textit{toya} nicht, stattdessen wirft der Compiler einen Fehler, sollten verschiedene Typen in einer Operation vorkommen.
 
 \section{Funktionen}
 
@@ -31,6 +33,8 @@ function add(lhs: int, rhs: int) -> int {
 Der Funktionskörper beinhaltet eine beliebige Menge an Statements und Ausdrücken. Hat eine Funktion einen Rückgabewert, so kann mit \texttt{return} ein nachfolgender Ausdruck rückgegeben werden. Das Schlüsselwort \texttt{return} ist jedoch optional: Wenn das letzte Statement gleichzeitig ein Ausdruck und vom gefordertem Typen ist, dann wird automatisch dieser Ausdruck retourniert. Hierbei ist jedoch aufzupassen, dass die Leserlichkeit erhalten bleibt.
 
 Funktionen werden mit dem Syntax \texttt{<funcname>(parameter*)} aufgerufen und sind vom Rückgabetypen der aufgerufenen Funktion. Für jeden Parameter kann jeder beliebige Ausdruck eingesetzt werden, solange der Ist- und Solltyp übereinstimmt.
+
+% TODO Std Functions
 
 \section{Statements}
 
@@ -69,27 +73,73 @@ Arrays werden mit dem Syntax \texttt{var <name> = new <typ>[int-Ausdruck]} dekla
 
 \subsection{For-Schleifen}
 
-\section{Kommentare}
+For-Schleifen in \textit{toya} verhalten sich gleich wie in vielen anderen Sprachen, Java zum Beispiel. Sie bestehen aus einem Schleifenkopf und einem Schleifenkörper. Der Schleifenkopf besteht aus 3 Teilen von denen alle 3 optional sind:
+\begin{itemize}
+    \item \textbf{Zählvariable:} Eine Variablendeklaration, die üblicherweise vom Inkrement-\\Ausdruck verändert wird und womit die Abbruchbedingung arbeitet.
+    \item \textbf{Abbruchbedingung:} Ein Ausdruck, der zu einem booleschen Wert evaluieren muss.
+    \item \textbf{Inkrement-Ausdruck:} Der Ausdruck, welcher nach jedem Schleifendurchlauf aufgerufen wird und wo typischerweise die Zählvariable verändert wird.
+\end{itemize}
+
+\begin{ToyaCode}[numbers=none, caption={Eine For-Schleife, die die Zählvariable auf die Konsole ausgibt.}]
+for (var i = 0; i <= 10; i++) {
+    println(i)
+}
+\end{ToyaCode}
+
+Gibt es keine Abbruchbedingung, so läuft die Schleife, solange das Programm läuft. Wie in Java kann man also mit \texttt{for (;;) { ... }} eine Endlos-Schleife erzeugen.
 
 \section{Ausdrücke}
 
+Ausdrücke in \textit{toya} sind alle Konstrukte, welche einen Wert zurückgeben. So sind Funktionsaufrufe, die einen Rückgabewert haben, If-Verzweigungen, boolesche und arithmetische Ausdrücke, Literale und Variablen. Ausdrücke evaluieren immer zu einem konkreten Wert, welcher aus dem Wertebereich eines bestimmten Typen entstammt. Abgesehen vom zwingenden Übereinstimmen des Ist- und Solltypen existieren keine Beschränkungen, was das Ersetzen von Ausdrücke durch andere Ausdrücken betrifft.
+
 \subsection{Arithmetik}
 
-\subsection{Boolsche Logik}
+\textit{Toya} unterstützt Multiplikation (\texttt{*}), Addition (\texttt{+}), Subtraktion (\texttt{-}) und Division (\texttt{/}) für Integer- und Double-Werte via Infix Notation. Bei der Evaluierung von arithmetischen Ausdrücke wird auf die Klammerung und auf die Operatorrangfolge (\textit{Punkt vor Strich}) Rücksicht genommen, da die Evaluierung immer von innen nach außen geschieht. 
 
-\subsection{If-Ausdrücke}
+% TODO precedence der Operatoren Grafik hier einfügen
+
+\subsection{Boolesche Logik}
+
+Boolesche Ausdrücke sind essenziell für Verwendung von If-Verzweigungen und For-Schleifen, da sie als Abbruchbedingung, beziehungsweise für die Zweig-Wahl benötigt werden. Zur Auswahl stehen die booleschen Operatoren `Und' (\texttt{\&\&}) und `Oder' (\texttt{||}) und die Comparators Größer (\texttt{>}), Größer-Gleich (\texttt{>=}), Gleich (\texttt{==}), Kleiner-Gleich (\texttt{<=}) und Kleiner (\texttt{<}). Außerdem können boolesche Ausdrücke mit dem Präfix \texttt{!} negiert werden.
+
+Sollten Teile eines booleschen Ausdrucks geklammert sein, so nimmt der Parser Rücksicht darauf, jedoch sind alle Operatoren gleichrangig.
+
+% TODO welche Operation für welchen Typen unterstützt wird.
+
+\subsection{If-Verzweigungen}
+
+If-Verzweigungen ermöglichen der Entwicklerin, bedingte Ausführung zu implementieren. If-Verzweigungen sind sehr flexibel in ihrem Syntax, da sowohl ein einzelner Ausdruck als auch mehrere Statements in einem Zweig vorkommen können. \texttt{if (<boolean-ausdruck>) \{ <statement>* \} else \{ <statements>* \}} ermöglicht mehrere Statements pro Block, wobei jeder Block von geschwungenen Klammern umgeben ist. Ist das letzte Statement ein Ausdruck, so  oder \texttt{if (<boolean-ausdruck>) ausdruck else ausdruck}
+
+\begin{ToyaCode}[numbers=none, caption={If-Verzweigung als klassisches Statement.}]
+var someBoolean = true
+if (someBoolean) {
+    doSomething()
+    print(someBoolean)
+} else {
+    print(someBoolean)
+}
+\end{ToyaCode}
+
+\begin{ToyaCode}[numbers=none, caption={If-Verzweigung als Ausdruck in einer Variablenzuweisung.}]
+var someBoolean = false
+var someInteger = if (someBoolean) 4 else 5
+\end{ToyaCode}
+
+Die Stärke der If-Verzweigung in toya liegt darin, dass es nicht nur Statement ist, sondern auch die Verwendung als Ausdruck möglich ist. Dadurch kann eine If-Verzweigung auf der rechten Seite einer Variablenzuweisung, in arithmetischen Ausdrücken, als Bedingung in anderen If-Verzweigungen, etc. vorkommen.
+
+Um die Verwendung als Ausdrück zu ermöglichen, ist zu beachten, dass bei If-Verzweigungen im Statement-Format das letzte Statement ein Ausdruck sein muss; beim Ausdruck-Format besteht jeder Zweig sowieso nur aus einem Ausdruck, dadurch ist diese Bedingung hinfällig. Außerdem müssen die Typen in allen Zweigen übereinstimmen und der ansonsten optionale else-Zweig zwingend vorhanden sein. Wäre der else-Zweig nämlich nicht vorhanden, dann wäre kein Wert als Folge der Evaluierung garantierbar.
+
+\subsection{Literale}
+
+Literale sind die primitivsten Ausdrücke in \textit{toya} und stellen absolute Werte dar. Jeder Typ hat ein bestimmtes Format für Literale, sodass Typ-Inferenz möglich ist. 
+
+\begin{itemize}
+    \item \textbf{Integer:} Alle numerischen Werte ohne Nachkommastellen. (z.B.: \texttt{12345})
+    \item \textbf{Double:} Alle numerischen Werte mit Nachkommastellen. (z.B.: \texttt{123.45})
+    \item \textbf{String:} Alle Zeichenketten, die von doppelten Anführungszeichen umgeben sind. (z.B.: \texttt{``Hello World''})
+    \item \textbf{Boolean:} \texttt{true} und \texttt{false}. 
+\end{itemize}
+
+\section{Kommentare}
 
 \textit{Toya} erlaubt die Erstellung von Kommentaren. Ein Kommentar beginnt mit einem doppelten Schrägstrich \texttt{//}; alle weiteren Zeichen in dieser Zeile -- bis zum Zeilenumbruch -- ignoriert der Parser.
-
-- introduction von toya (grundsätzliche features, "auf diese wird in diesem Kapitel noch näher eingegangen")
-- namenserklärung
-- Funktionen
-- Typen
-- Variablen
-- Expressions:
-    - Arithmetik
-    - Boolean
-    - If
-    - Arrays
-- Statements
-    - For Statement
