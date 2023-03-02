@@ -8,22 +8,397 @@ Um die Funktionalität von \toya zu gewährleisten, sind Tests zu vollziehen. Di
     \item Die Ausgabe des Programms überprüfen
 \end{enumerate}
 
-Insgesamt gilt es, die einzelnen Sprachkonstrukte, wie zum Beispiel for-Schleifen und Variablendeklaration, und anschließend umfangreichere Programme zu testen.
+Die Analyse des Bytecode erfolgt mit dem, in der JDK inkludierten Werkzeug \texttt{javap}. Dieses erlaubt es, den Bytecode einer \texttt{class}-Datei in einer für Menschen leserlicher Form auszugeben. Der Aufruf erfolgt über die Kommandozeile im Format: \texttt{javap -c Main.class}. Das Argument \texttt{-c} zeigt zusätzlich die Bytecode Befehle innerhalb der Methoden an. Die Ausführung der Programme erfolgt über die Kommandozeile mit dem Befehl \texttt{java Main}.
+
+Insgesamt gilt es, die einzelnen Sprachkonstrukte, wie zum Beispiel For-Schleifen und Variablendeklaration und anschließend umfangreichere Programme zu testen.
 
 \section{Hello World}
 
-\begin{ToyaCode}[numbers=none, caption={Hello World}]
+\begin{ToyaCode}[numbers=none, caption={Quelltext des Hello World Programms}]
 function main(args: string[]) {
     print("Hello World")
 }
 \end{ToyaCode}
 
+\begin{JavaCode}[numbers=none, caption={Bytecode des Hello World Programms}]
+public class Main {
+    public static void main(java.lang.String[]);
+        Code:
+            0: getstatic     #12    // Field java/lang/System.out:Ljava/io/PrintStream;
+            3: ldc           #14    // String Hello World
+            5: invokevirtual #20    // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+            8: return
+}
+\end{JavaCode}
+
+\begin{ToyaCode}[numbers=none, caption={Konsolen-Ausgabe des Hello World Programms}]
+Hello World    
+\end{ToyaCode}
+
 \section{Funktionen}
+
+\begin{ToyaCode}[numbers=none, caption={Funktionen}]
+function title() {
+    print("This is an addition:")
+}
+
+function add(lhs: int, rhs: int) -> int {
+    lhs + rhs
+}
+
+function main(args: string[]) {
+    title()
+    print(add(1,2))
+}
+\end{ToyaCode}  
+
+\begin{JavaCode}[numbers=none, caption={Bytecode für Funktionen}]
+public class Main {
+    public static void title();
+        Code:
+            0: getstatic     #12    // Field java/lang/System.out:Ljava/io/PrintStream;
+            3: ldc           #14    // String This is an addition:
+            5: invokevirtual #20    // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+            8: return
+
+    public static int add(int, int);
+        Code:
+            0: iload_0
+            1: iload_1
+            2: iadd
+            3: ireturn
+
+    public static void main(java.lang.String[]);
+        Code:
+            0: invokestatic  #26    // Method title:()V
+            3: getstatic     #12    // Field java/lang/System.out:Ljava/io/PrintStream;
+            6: ldc           #27    // int 1
+            8: ldc           #28    // int 2
+            10: invokestatic  #30   // Method add:(II)I
+            13: invokevirtual #33   // Method java/io/PrintStream.println:(I)V
+            16: return
+}    
+\end{JavaCode}
+
+\begin{ToyaCode}[numbers=none, caption={Konsolen-Ausgabe der Funktionen}]
+This is an addition:
+3  
+\end{ToyaCode}
+
 
 \section{Variablen}
 
-\section{Arrays}
+\begin{ToyaCode}[numbers=none, caption={Variablen}]
+function someFunction() -> int {
+    return 8
+}
+
+function main(args: string[]) {
+    var number = 123
+    var word = "Hello World"
+    var double = 123.456
+    var bool = true
+    var result = someFunction()
+
+    print(number)
+    print(word)
+    print(double)
+    print(bool)
+    print(result)
+}
+\end{ToyaCode}
+
+\begin{JavaCode}[numbers=none, caption={Bytecode von Variablen}]
+public class Main {
+    public static int someFunction();
+        Code:
+            0: ldc           #7                  // int 8
+            2: ireturn
+    
+    public static void main(java.lang.String[]);
+        Code:
+            0: ldc           #10    // int 123
+            2: istore_1
+            3: ldc           #12    // String Hello World
+            5: astore_2
+            6: ldc2_w        #13    // double 123.456d
+            9: dstore_3
+            10: iconst_1
+            11: istore        5
+            13: invokestatic  #16   // Method someFunction:()I
+            16: istore        6
+            18: getstatic     #22   // Field java/lang/System.out:Ljava/io/PrintStream;
+            21: iload_1
+            22: invokevirtual #28   // Method java/io/PrintStream.println:(I)V
+            25: getstatic     #22   // Field java/lang/System.out:Ljava/io/PrintStream;
+            28: aload_2
+            29: invokevirtual #31   // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+            32: getstatic     #22   // Field java/lang/System.out:Ljava/io/PrintStream;
+            35: dload_3
+            36: invokevirtual #34   // Method java/io/PrintStream.println:(D)V
+            39: getstatic     #22   // Field java/lang/System.out:Ljava/io/PrintStream;
+            42: iload         5
+            44: invokevirtual #37   // Method java/io/PrintStream.println:(Z)V
+            47: getstatic     #22   // Field java/lang/System.out:Ljava/io/PrintStream;
+            50: iload         6
+            52: invokevirtual #28   // Method java/io/PrintStream.println:(I)V
+            55: return
+}      
+\end{JavaCode}
+
+\begin{ToyaCode}[numbers=none, caption={Konsolen-Ausgabe der Variablen}]
+123
+Hello World
+123.456
+true
+8    
+\end{ToyaCode}
+
+\section{Felder}
+
+\begin{ToyaCode}[numbers=none, caption={Felder}]
+function main(args: string[]) {
+    var arr = new int[8]
+    arr[3] = 15
+
+    print(arr[3])
+    print(arr[4])
+}
+\end{ToyaCode}
+
+\begin{JavaCode}[numbers=none, caption={Bytecode von Felder}]
+public class Main {
+    public static void main(java.lang.String[]);
+        Code:
+             0: ldc           #7    // int 3
+             2: ldc           #8    // int 4
+             4: if_icmpgt     11
+             7: iconst_0
+             8: goto          12
+            11: iconst_1
+            12: ifne          20
+            15: ldc           #9    // int 6
+            17: goto          22
+            20: ldc           #10   // int 5
+            22: istore_1
+            23: getstatic     #16   // Field java/lang/System.out:Ljava/io/PrintStream;
+            26: iload_1
+            27: invokevirtual #22   // Method java/io/PrintStream.println:(I)V
+            30: ldc           #7    // int 3
+            32: ldc           #8    // int 4
+            34: if_icmplt     41
+            37: iconst_0
+            38: goto          42
+            41: iconst_1
+            42: ifne          56
+            45: getstatic     #16   // Field java/lang/System.out:Ljava/io/PrintStream;
+            48: ldc           #24   // String false branch
+            50: invokevirtual #27   // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+            53: goto          64
+            56: getstatic     #16   // Field java/lang/System.out:Ljava/io/PrintStream;
+            59: ldc           #29   // String true branch
+            61: invokevirtual #27   // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+            64: return
+}       
+\end{JavaCode}
+
+\begin{ToyaCode}[numbers=none, caption={Konsolen-Ausgabe der Felder}]
+15
+0    
+\end{ToyaCode}
 
 \section{If-Verzweigungen}
 
+\begin{ToyaCode}[numbers=none, caption={If-Verzweigungen}]
+function main(args: string[]) {
+    var value = if (3 > 4) 5 else 6
+    print(value)
+
+    if(3 < 4) {
+        print("true branch")
+    } else {
+        print("false branch")
+    }
+}
+\end{ToyaCode}
+
+\begin{JavaCode}[numbers=none, caption={Byteocde der If-Verzweigungen}]
+public class Main {
+    public static void main(java.lang.String[]);
+        Code:
+             0: ldc           #7    // int 3
+             2: ldc           #8    // int 4
+             4: if_icmpgt     11
+             7: iconst_0
+             8: goto          12
+            11: iconst_1
+            12: ifne          20
+            15: ldc           #9    // int 6
+            17: goto          22
+            20: ldc           #10   // int 5
+            22: istore_1
+            23: getstatic     #16   // Field java/lang/System.out:Ljava/io/PrintStream;
+            26: iload_1
+            27: invokevirtual #22   // Method java/io/PrintStream.println:(I)V
+            30: ldc           #7    // int 3
+            32: ldc           #8    // int 4
+            34: if_icmplt     41
+            37: iconst_0
+            38: goto          42
+            41: iconst_1
+            42: ifne          56
+            45: getstatic     #16   // Field java/lang/System.out:Ljava/io/PrintStream;
+            48: ldc           #24   // String false branch
+            50: invokevirtual #27   // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+            53: goto          64
+            56: getstatic     #16   // Field java/lang/System.out:Ljava/io/PrintStream;
+            59: ldc           #29   // String true branch
+            61: invokevirtual #27   // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+            64: return
+}
+\end{JavaCode}
+
+\begin{ToyaCode}[numbers=none, caption={Konsolen-Ausgabe der If-Verzweigungen}]
+6
+true branch    
+\end{ToyaCode}
+
 \section{For-Schleifen}
+
+\begin{ToyaCode}[numbers=none, caption={For-Schleifen}]
+function main(args: string[]) {
+    var n = 200
+
+    for (var i = 0; i <= n; i = i+10) {
+        if (i == 20) {
+            print("i is 20:")
+        }
+        print(i)
+    }
+}
+\end{ToyaCode}
+
+\begin{JavaCode}[numbers=none, caption={Bytecode der For-Schleife}]
+public class Main {
+    public static void main(java.lang.String[]);
+        Code:
+             0: ldc           #7    // int 200
+             2: istore_1
+             3: ldc           #8    // int 0
+             5: istore_2
+             6: iload_2
+             7: iload_1
+             8: if_icmple     15
+            11: iconst_0
+            12: goto          16
+            15: iconst_1
+            16: ifeq          59
+            19: iload_2
+            20: ldc           #9    // int 20
+            22: if_icmpeq     29
+            25: iconst_0
+            26: goto          30
+            29: iconst_1
+            30: ifne          36
+            33: goto          44
+            36: getstatic     #15   // Field java/lang/System.out:Ljava/io/PrintStream;
+            39: ldc           #17   // String i is 20:
+            41: invokevirtual #23   // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+            44: getstatic     #15   // Field java/lang/System.out:Ljava/io/PrintStream;
+            47: iload_2
+            48: invokevirtual #26   // Method java/io/PrintStream.println:(I)V
+            51: iload_2
+            52: ldc           #27   // int 10
+            54: iadd
+            55: istore_2
+            56: goto          6
+            59: return
+}
+\end{JavaCode}
+
+\begin{ToyaCode}[numbers=none, caption={Konsolen-Ausgabe der For-Schleife}]
+0
+10
+i is 20:
+20
+30
+40
+50
+60
+70
+80
+90
+100
+110
+120
+130
+140
+150
+160
+170
+180
+190
+200
+\end{ToyaCode}
+
+\section{Umfangreicheres Beispiel}
+Die Tests bisher beschränkten sich auf einzelne Eigenschaften von \toya. Um aber auch das Zwischenspiel von mehreren Eigenschaften zu testen, wird nun noch ein umfangreicheres Programm analysiert. Dieses Programm ruft eine Funktion auf, welche Zeichenketten auf der Konsole ausgibt, definiert Variablen von Felder und primitiven Datentypen, iteriert über eine For-Schleife, welche eine If-Verzweigung enthält und verändert und liest Felder.
+
+\begin{ToyaCode}[numbers=none, caption={Quelltext des umfangereicheren Beispiels}]
+function printIntro(n: int) {
+    print("Welcome to a simple toya program")
+    print("Calculating numbers up to: ")
+    print(n)
+    print("---------")
+}
+
+function main(args: string[]) {
+    var n = 200
+    printIntro(n)
+
+    for (var i = 0; i <= n; i = i+10) {
+        if (i == 20) {
+            print("i is 20:")
+        }
+        print(i)
+    }
+
+    var boolArr = new boolean[2]
+    boolArr[1] = true
+    print(boolArr[0])
+    print(boolArr[1])
+}
+\end{ToyaCode}
+
+Da das Anzeigen des Bytecodes bei diesem umfangereicheren Beispiel zu lange ist und alle Fragmente in den anderen Tests bereits zu sehen ist, wird der Bytecode an dieser Stelle ausgelassen
+
+\begin{ToyaCode}[numbers=none, caption={Konsolen-Ausgabe des umfangereicheren Beispiels}]
+Welcome to a simple toya program
+Calculating numbers up to:
+200
+---------
+0
+10
+i is 20:
+20
+30
+40
+50
+60
+70
+80
+90
+100
+110
+120
+130
+140
+150
+160
+170
+180
+190
+200
+false
+true    
+\end{ToyaCode}

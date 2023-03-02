@@ -9,7 +9,7 @@
 \RequirePackage{ifthen}
 \RequirePackage{textcomp}	%% required for upquote option
 
-\RequirePackage{xcolor}
+\RequirePackage[dvipsnames]{xcolor}
 \definecolor{ListingsBackgroundColor}{gray}{0.95}
 
 \RequirePackage{listingsutf8}
@@ -401,11 +401,18 @@ keepspaces=true,%
 % Language definition for toya
 \lstdefinelanguage{toya}
 {
-	keywords=[1]{for,var,function,match,if,else,true,false,null,default,return,new},
-	keywords=[2]{string, int, double, boolean, char},
+	keywords={for,var,function,match,if,else,true,false,null,default,return,new},
+	ndkeywords={string, int, double, boolean, char},
+	keywordstyle={\color{NavyBlue}\bfseries},
+	ndkeywordstyle={\color{BurntOrange}\bfseries},
 	otherkeywords={>,<,==,>=,<=,!=,&&,||,!,*,+,-,/},
 	sensitive=true,
 	comment=[l]{//},
+	commentstyle={\color{gray}\ttfamily},
+	emph={print},
+	emphstyle={\color{OrangeRed}},
+	identifierstyle=\color{black},
+	stringstyle={\color{ForestGreen}\ttfamily}
 	morestring=[b]"
 }
 
@@ -417,6 +424,7 @@ keepspaces=true,%
 	#1}}%
 {}
 
+% https://github.com/cansik/kotlin-latex-listing
 \lstdefinelanguage{Kotlin}{
   comment=[l]{//},
   commentstyle={\color{gray}\ttfamily},
@@ -441,6 +449,26 @@ keepspaces=true,%
 	#1}}%
 {}
 
+\lstdefinelanguage{Antlr}{
+	basicstyle=\small\ttfamily\color{OrangeRed},%
+    breaklines=true,
+    moredelim=[s][\color{green!50!black}\ttfamily]{'}{'},
+    moredelim=*[s][\color{black}\ttfamily]{options}{\}},
+    commentstyle={\color{gray}\itshape},
+    morecomment=[l]{//},
+    emph={STRING},
+	emphstyle={\color{blue}\ttfamily},
+    alsoletter={:,|,;},
+    morekeywords={:,|,;},
+    keywordstyle={\color{black}},  
+}
+
+\lstnewenvironment{AntlrCode}[1][]
+{\lstset{%
+	language=Antlr,
+	escapeinside={/+}{+/},
+	#1}}%
+{}
 
 % Disable the lstlisting environment (due to popular abuse)
 \newcommand{\@WarnLstlisting}{

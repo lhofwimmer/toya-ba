@@ -1,7 +1,7 @@
 \chapter{Programmiersprache toya}
 \label{cha:toya}
 
-\toya ist eine stark typisierte, turing-vollständige Programmiersprache für die \textit{Java Virtual Machine} mit einem Fokus auf Simplizität. Der Syntax ist, wie bei C\# oder Java zum Beispiel, stark an C angelehnt. Auf die Syntax wird in diesem Kapitel bei der näheren Behandlung der einzelnen Komponenten der Sprache eingegangen. 
+\toya ist eine stark typisierte, turing\-vollständige Programmiersprache für die \textit{Java Virtual Machine} mit einem Fokus auf Simplizität. Der Syntax ist, wie bei C\# oder Java zum Beispiel, stark an C angelehnt. Auf die Syntax wird in diesem Kapitel bei der näheren Behandlung der einzelnen Komponenten der Sprache eingegangen. 
 
 \begin{CJK}{UTF8}{ipxm}
 Der Name \toya, in Anlehnung an Java und Kotlin, findet seinen Ursprung bei einer Insel. Dabei handelt es sich konkret um 洞爺湖 (Tōya-ko), einen Kratersee im Norden Japans, der wiederum die Insel 中島 (Nakajima) enthält. Von Tōya-ko leitet sich dann der Name \toya ab.
@@ -15,7 +15,7 @@ Die Benutzer:in hat die Möglichkeit, ein \toya-Programm auf mehrere Dateien auf
 
 \toya stellt insgesamt fünf Typen und Felder von diesen Typen zur Verfügung. Diese sind \texttt{boolean}, \texttt{int}, \texttt{double} und \texttt{string}, wobei hierbei \texttt{int}, \texttt{boolean} und \texttt{string} eindeutig die wichtigsten sind, da jeder dieser Typen in unterschiedlichen Domänen seine Verwendung findet. Das Erstellen weiterer Typen ist nicht möglich.
 
-Feld-Typen sind mit dem allgemein bekannten Suffix `\texttt{[]}' und dem Schlüsselwort \textit{new} zu deklarieren. So ist zum Beispiel der Typ eines Zeichenketten-Feld als \texttt{string[]} zu schreiben. Die JVM bietet zusätzlich noch die Datentypen \texttt{byte}, \texttt{short}, \texttt{long} und \texttt{float}, aber weil alle diese Typen redundant in ihrem Aufgabenbereich sind, kommen diese nicht in \toya vor, da der Sinn von \toya nicht die vollständige Ausschöpfung aller JVM-Eigenschaften ist, sondern die explorative Implementierung einer Programmiersprache, wofür nicht alle Datentypen benötigt werden. Der \texttt{returnAddress}-Typ wird hier außer acht gelassen, weil dieser nur JVM-interne Relevanz hat.
+Feld-Typen sind mit dem allgemein bekannten Suffix `\texttt{\[\]}' und dem Schlüsselwort \textit{new} zu deklarieren. So ist zum Beispiel der Typ eines Zeichenketten-Feld als \texttt{string\[\]} zu schreiben. Die JVM bietet zusätzlich noch die Datentypen \texttt{byte}, \texttt{short}, \texttt{long} und \texttt{float}, aber weil alle diese Typen redundant in ihrem Aufgabenbereich sind, kommen diese nicht in \toya vor, da der Sinn von \toya nicht die vollständige Ausschöpfung aller JVM-Eigenschaften ist, sondern die explorative Implementierung einer Programmiersprache, wofür nicht alle Datentypen benötigt werden. Der \texttt{returnAddress}-Typ wird hier außer acht gelassen, weil dieser nur JVM-interne Relevanz hat.
 
 \texttt{int} hat einen Wertebereich von $-2^{31}$ bis $2^{31} - 1$; \texttt{double} folgt der IEEE-754-Spezifikation: 1 Bit für das Vorzeichen, 11 Bit für den Exponenten und 52 Bit für die Mantisse. \texttt{boolean} hat die Werte \texttt{true} und \texttt{false}. \texttt{True} wird intern als $1$ mit repräsentiert, \texttt{false} mit 0. Die JVM kennt keinen nativen Zeichenketten-Typ, da dieser als Referenz repräsentiert wird. Da \toya keine Erstellung von Typen erlaubt, sind die einzigen Referenztypen Zeichenketten und Felder. Die Bytecode-Generierung \textit{toyas} unterscheidet immer zwischen Felder und nicht-Felder, wenn es um die Auswahl der richtigen Opcodes geht, dadurch ergibt sich, dass eine Referenz, welche kein Feld ist, immer ein String sein muss. Zeichenketten werden als Literale mit doppelte Anführungszeichen definiert. So ist ein Hello World String als \texttt{``Hello World''} anzugeben.
 
@@ -108,7 +108,7 @@ Boole'sche Ausdrücke sind essenziell für die Verwendung von If-Verzweigungen u
 
 If-Verzweigungen ermöglichen Entwickler:innen, bedingte Ausführung zu implementieren. If-Verzweigungen sind sehr flexibel in ihrer Syntax, da sowohl ein einzelner Ausdruck, als auch ein Block mit mehrere Anweisungen in den Zweigen des Ifs angegeben werden kann. 
 
-\texttt{if (<boolean-expression>) \{ <statement>* \} else \{ <statements>* \}} ermöglicht die Angabe von mehreren Statements pro Block, wobei jeder Block von geschwungenen Klammern umgeben ist. Hat man die Absicht, nur einen Ausdruck pro Zweig anzugeben, dann reicht \texttt{if (<boolean-ausdruck>) expression else expression} völlig aus.
+\texttt{if (<boolean-expression>) \{ <statement>* \} else \{ <statement>* \}} ermöglicht die Angabe von mehreren Anweisungen pro Block, wobei jeder Block von geschwungenen Klammern umgeben ist. Hat man die Absicht, nur einen Ausdruck pro Zweig anzugeben, dann reicht \texttt{if (<boolean-ausdruck>) expression else expression} völlig aus.
 
 \begin{ToyaCode}[numbers=none, caption={If-Verzweigung als klassische Anweisung.}]
 var someBoolean = true
@@ -125,13 +125,13 @@ var someBoolean = false
 var someInteger = if (someBoolean) 4 else 5
 \end{ToyaCode}
 
-Die Stärke der If-Verzweigung in toya liegt darin, dass es nicht nur ein Statement ist, sondern auch die Verwendung als Ausdruck möglich ist. Dadurch kann eine If-Verzweigung auf der rechten Seite einer Variablenzuweisung, in arithmetischen Ausdrücken, als Bedingung in anderen If-Verzweigungen, etc. vorkommen. Andere Programmiersprachen, wie Java, bieten einen ternären Operator \texttt{var x = boolean-expression ? expression : expression}. Dieser existiert in \toya jedoch nicht, da die If-Verzweigung bereits diesen Zweck erfüllt. 
+Die Stärke der If-Verzweigung in toya liegt darin, dass es nicht nur ein Anweisung ist, sondern auch die Verwendung als Ausdruck möglich ist. Dadurch kann eine If-Verzweigung auf der rechten Seite einer Variablenzuweisung, in arithmetischen Ausdrücken, als Bedingung in anderen If-Verzweigungen, etc. vorkommen. Andere Programmiersprachen, wie Java, bieten einen ternären Operator \texttt{var x = boolean-expression ? expression : expression}. Dieser existiert in \toya jedoch nicht, da die If-Verzweigung bereits diesen Zweck erfüllt. 
 
 % TODO: Hinweis auf Kotlin
 % https://discuss.kotlinlang.org/t/ternary-operator/2116/10
 % short answer: https://discuss.kotlinlang.org/t/ternary-operator/2116/171
 
-Um die Verwendung als Ausdruck zu ermöglichen, ist zu beachten, dass bei If-Verzweigungen mit Blöcken das letzte Statement ein Ausdruck sein muss; bei If-Verzweigungen mit Ausdrücken besteht jeder Zweig sowieso nur aus einem Ausdruck, dadurch ist diese Bedingung sowieso gegeben. Außerdem müssen die Typen in allen Zweigen übereinstimmen und der sonst optionale else-Zweig zwingend vorhanden sein. Wäre der else-Zweig nämlich nicht vorhanden, dann wäre unter Umständen kein Wert als Folge der Evaluierung gegeben.
+Um die Verwendung als Ausdruck zu ermöglichen, ist zu beachten, dass bei If-Verzweigungen mit Blöcken die letzte Anweisung ein Ausdruck sein muss; bei If-Verzweigungen mit Ausdrücken besteht jeder Zweig sowieso nur aus einem Ausdruck, dadurch ist diese Bedingung sowieso gegeben. Außerdem müssen die Typen in allen Zweigen übereinstimmen und der sonst optionale else-Zweig zwingend vorhanden sein. Wäre der else-Zweig nämlich nicht vorhanden, dann wäre unter Umständen kein Wert als Folge der Evaluierung gegeben.
 
 \subsection{Literale}
 

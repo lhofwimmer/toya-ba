@@ -109,7 +109,7 @@
 \RequirePackage[percent]{overpic}	% to allow text/graphics overlays on pictures
 \RequirePackage{pict2e}				% extends the LaTeX 'picture' environment		
 
-\RequirePackage{xcolor}
+\RequirePackage[dvipsnames]{xcolor}
 \newcommand{\@MissingArg}[1]{\textcolor{red}{#1}}
 
 \RequirePackage[T1,hyphens,obeyspaces,spaces,lowtilde]{url}
@@ -332,4 +332,10 @@
 
 \usepackage{CJKutf8}
 
-\newcommand{\toya}{\toya}
+\RequirePackage{xspace}
+\newcommand{\toya}{\textit{toya}\xspace}
+\newcommand{\token}{\textit{Token}\xspace}
+\newcommand{\listener}{\textit{Listener}\xspace}
+\newcommand{\listeners}{\textit{Listeners}\xspace}
+\newcommand{\visitor}{\textit{Visitor}\xspace}
+\newcommand{\visitors}{\textit{Visitors}\xspace}

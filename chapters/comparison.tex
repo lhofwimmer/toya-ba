@@ -4,34 +4,89 @@
 Da der \toya-Compiler in Kotlin impelementiert und die Syntax in einigen Aspekten auch an Kotlin angelehnt ist liegt es nahe, einen Vergleich zwischen den beiden Sprachen durchzuführen. Ein besonderer Fokus im Vergleich liegt auf der Syntax, da der generierte Bytecode zwischen den beiden Sprachen kaum zu unterscheiden ist (abgesehen von Optimierungen für individuelle Code-Stücke in Kotlin). Im Folgenden werden nur die wesentlichen Unterschiede zwischen den beiden Sprachen im Umfang von \toya aufgezeigt. Im Sinne der Prägnanz wird über den direkten Vergleich hinaus nicht näher auf Kotlin eingegangen.
 
 \section{Übersicht Kotlin}
-Kotlin ist eine seit 2011 entwickelte statisch typisierte, imperative Programmiersprache mit Elementen der funktionalen Programmimerung. Als Antwort von JetBrains auf Java und Scala bietet Kotlin eine plattformübergreifende und idiomatische Programmiersprache, welche nahtlos in das JVM Ökosystem eingegliedert ist. Neben der JVM kompiliert Kotlin auch auf JavaScript, WebAssembly und Assembly. Für letzteres verwendet Kotlin die Compiler-Infrastruktur LLVM. Das momentane Haupt-Anwendungsgebiet liegt in der mobilen Entwicklung unter Android. Google empfiehlt seit 2019 [TODO: Google I/O 2019 reference https://developer.android.com/kotlin/first] Kotlin anstatt Java zu verwenden und bietet Teile der Standardbibliothek - Jetpack Compose - nur noch unter Kotlin an, da hierbei der Einsatz von Kotlin-spezifischen Compiler Plugins notwendig ist. Andrey Breslav leitete bis 2020 die Entwicklung von Kotlin und übergab anschließend die Verantwortung an Roman Elizarov. Aktuell befindet sich Kotlin bei der Version 1.8.10.
+Kotlin ist eine seit 2011 entwickelte statisch typisierte, imperative Programmiersprache mit Elementen der funktionalen Programmimerung. Als Antwort von JetBrains auf Java und Scala bietet Kotlin eine plattformübergreifende und idiomatische Programmiersprache, welche nahtlos in das JVM Ökosystem eingegliedert ist. Neben der JVM kompiliert Kotlin auch auf JavaScript, WebAssembly und Assembly. Für letzteres verwendet Kotlin die Compiler-Infrastruktur LLVM. Das momentane Haupt-Anwendungsgebiet liegt in der mobilen Entwicklung unter Android.
+
+Google empfiehlt seit 2019 TODO: Google I/O 2019 reference https://developer.android.com/kotlin/first Kotlin anstatt Java zu verwenden und bietet Teile der Standardbibliothek - Jetpack Compose - nur noch unter Kotlin an, da hierbei der Einsatz von Kotlin-spezifischen Compiler Plugins notwendig ist. Andrey Breslav leitete bis 2020 die Entwicklung von Kotlin und übergab anschließend die Verantwortung an Roman Elizarov. Aktuell befindet sich Kotlin bei der Version 1.8.10.
 
 Eines der wichtigsten Merkmale von Kotlin ist die Vermeidung des sogenannten "Billion Dollar Mistake": Null Pointer. Indem der Compiler bei der unerlaubten Zuweisung von Null-Werten in einen Ausnahmezustand versetzt wird, kann es während der Laufzeit nicht mehr zu unerwünschtem Verhalten kommen. Da es jedoch weiterhin Fälle gibt, in welchen null ein erwünschter Wert ist, kann die Entwickler:in via \texttt{?} den Typ einer Variable als \textit{nullable} markieren.
 
-Eines weiteres wichtiges Ziel Kotlins ist die Lesbarkeit des Codes. Dies zeigt sich vor allem in den Methoden der Standardbibliothek. So gibt es zum Überprüfen von Listen auf deren Leerheit die Methode \texttt{isEmpty()}, aber auch dessen Negation mit \texttt{isNotEmpty()}. Diese zweite Methode ist redundant, aber erleichtert die Lesbarkeit des Codes ungemein.
+Ein weiteres wichtiges Ziel Kotlins ist die Lesbarkeit des Codes. Dies zeigt sich vor allem in den Methoden der Standardbibliothek. So gibt es zum Überprüfen von Listen auf deren Leerheit die Methode \texttt{isEmpty()}, aber auch dessen Negation mit \texttt{isNotEmpty()}. Diese zweite Methode ist redundant, aber erleichtert die Lesbarkeit des Codes ungemein.
+
+Hinsichtlich der funktionalen Programmierung bietet Kotlin eine leicht verwendbare Syntax an, um zum Beispiel die Komposition von Funktionen umzusetzen. Unter anderem stehen Funktionen höherer Ordnung, Lambdafunktionen und Erweiterungsfunktionen zur Verfügung. Diese finden auch häufig Verwendung in der Standardbibliothek: \textit{Scope functions} sind Funktionen höherer Ordnung, die auf ein Objekt eine Lambdafunktion anwenden. Konkret stehen \texttt{let}, \texttt{run}, \texttt{with}, \texttt{apply} und \texttt{also} zur Verfügung, welche sich in der Art und Weise, wie sie das Objekt behandeln, unterscheiden. Auf diese Funktionen wird nicht näher eingegangen, da diese nicht Teil dieser Bachelorarbeit sind.
 
 \section{Funktionen}
 
+Kotlin verwendet das Schlüsselwort \texttt{fun} zur Funktionsdefinition. Der Programmeinstieg geschieht über eine eindeutig identifizierbare \texttt{main}-Funktion, welche man optional mit einem \texttt{args: String[]} Parameter versehen kann. Entscheidet die Benutzer:in sich dazu, die \texttt{main}-Funktion parameterlos zu implementieren, erstellt der Compiler intern eine zweite \texttt{main}-Funktion mit \texttt{args: String[]} Parameter, welche dazu dient, die, von der Nutzer:in definierte \texttt{main}-Funktion aufzurufen.
+
+\begin{KotlinCode}[numbers=none, caption={Funktion unter Kotlin}]
+fun add(lhs: Int, rhs: Int) : Int {
+    return lhs + rhs
+}
+\end{KotlinCode}
+
+\begin{ToyaCode}[numbers=none, caption={Funktion unter toya}]
+function add(lhs: int, rhs: int) -> int {
+    return lhs + rhs
+}
+\end{ToyaCode}
+
 \section{Variablen}
 
-In Kotlin stehen zur Deklaration von Variablen die Schlüsselwörter \texttt{var} und \texttt{val} zur Verfügung. Die Bestimmung des Typs erfolgt entweder implizit anhand des zugewiesenen Ausdrucks oder explizit. \texttt{val someString: String = "Hello World"} weißt zum Beispiel der unveränderlichen Variable \textit{someString} den Wert \textit{Hello World} zu. Die explizite Angabe des Typs \textit{String} ist bei diesem Beispiel redundant, da aus dem Ausdruck der Typ ableitbar ist und daher nicht zwingend notwendig.
+In Kotlin stehen zur Deklaration von Variablen die Schlüsselwörter \texttt{var} (Wert ist veränderbar) und \texttt{val} (Wert ist unveränderbar) zur Verfügung. Die Bestimmung des Typs erfolgt entweder implizit anhand des zugewiesenen Ausdrucks oder explizit.\\ \texttt{val someString: String = ``Hello World''} weißt zum Beispiel der Variable \textit{someString} den Wert \textit{Hello World} zu. Die explizite Angabe des Typs \textit{String} ist bei diesem Beispiel redundant, da aus dem Ausdruck der Typ ableitbar ist und daher nicht zwingend notwendig.
 
-\toya Im Gegensatz dazu bietet \toya zur Variablendeklaration nur das Schlüsselwort \texttt{var} an, da in \toya alle Variablen veränderbar sind. Die explizite Angabe von Typen ist nicht möglich. Der Typ leitet sich immer vom Ausdruck ab.
+Im Gegensatz dazu bietet \toya zur Variablendeklaration nur das Schlüsselwort \texttt{var} an, da in \toya alle Variablen veränderbar sind. Die explizite Angabe von Typen ist nicht möglich. Der Typ leitet sich immer vom Ausdruck ab.
+
+\begin{KotlinCode}[numbers=none, caption={Variablendeklarationen in Kotlin}]
+val number: Int = 123
+val word: String = "Hello World"
+var value: Double = 123.456
+var bool = true
+var result = someFunction()
+\end{KotlinCode}
+
+\begin{ToyaCode}[numbers=none, caption={Variablendeklarationen in \toya}]
+var number = 123
+var word = "Hello World"
+var value = 123.456
+var bool = true
+var result = someFunction()
+\end{ToyaCode}
 
 \section{Felder}
 
-Kotlin bietet für die Verwendung von Felder die generische Klasse \texttt{Array} an. Da Felder, wie in anderen Sprachen, auch in Kotlin statisch in ihrer Größe sind, ist die Anzahl an speicherbaren Elementen als Konstruktorparameter anzugeben. Alternativ dazu besteht die Möglichkeit, mithilfe der Hilfs-Funktion \texttt{arrayOf(...)} ein Feld mit Werten zu initialisieren. \toya hingegen beruft sich auf den C-artigen Syntax und verwendet die eckigen Klammern \texttt{[]} zur Initialisierung von Feldern. Die Größe ist abermals statisch und als Ausdruck innerhalb der eckigen Klammern anzugeben.
+Kotlin bietet für die Verwendung von Felder die generische Klasse \texttt{Array} an. Da Felder, wie in anderen Sprachen, auch in Kotlin statisch in ihrer Größe sind, ist die Anzahl an speicherbaren Elementen als Konstruktorparameter anzugeben. Alternativ dazu besteht die Möglichkeit, mithilfe der Hilfs-Funktion \texttt{arrayOf(...)} ein Feld mit Werten zu initialisieren. Für primitive Typen existieren Klassen, \toya hingegen beruft sich auf den C-artigen Syntax und verwendet Ausdrücke in der Form von \texttt{new <type>[int-expression]} zur Initialisierung von Felder. Die Größe ist ebenso statisch und als Ausdruck innerhalb der eckigen Klammern anzugeben.
+
+\begin{KotlinCode}[numbers=none, caption={Felder in Kotlin}]
+var arrayViaClass = IntArray(5)
+var arrayWithValues = arrayOf(1,2,3,4,5)
+arrayViaClass[2] = 5
+\end{KotlinCode}
+
+\begin{ToyaCode}[numbers=none, caption={Felder in \toya}]
+var array = new int[5]
+arra[2] = 5
+\end{ToyaCode}
 
 \section{If-Verzweigung}
 
-Die Semantik und Syntax von If-Verzweigungungen in \toya gleichen denen in Kotlin. So kann die Benutzer:in sowohl einen einzelnen Ausdruck als auch einen gesamten Programmblock als Zweig angeben. Ebenso ersetzt die normale If-Verzweigung den ternären Operator wenn alle Zweige einen Ausdruck darstellen. Dies ist ein weiteres Mittel von Kotlin, die Lesbarkeit des Codes zu verbessern. 
+Die Semantik und Syntax von If-Verzweigungungen in \toya gleichen denen in Kotlin. So kann die Benutzer:in sowohl einen einzelnen Ausdruck als auch einen gesamten Programmblock als Zweig angeben. Ebenso ersetzt die normale If-Verzweigung den ternären Operator, wenn alle Zweige einen Ausdruck darstellen. Dies ist ein weiteres Mittel von Kotlin, die Lesbarkeit des Codes zu verbessern. 
+
+\begin{KotlinCode}[numbers=none, caption={If-Ausdruck, der sowohl in Kotlin, als auch in \toya übersetzt}]
+var number = if(3 > 4) 5 else 6
+\end{KotlinCode}
 
 \section{For-Schleifen}
 
-Während \toya For-Schleifen denen von Java stark ähneln, bietet Kotlin eine deutlich kompaktere, aber auch flexiblere Syntax an. So hat die Benutzer:in die Möglichkeit entweder über einen \texttt{int}-Bereich oder auch über eine Enumeration zu iterieren. 
+Während \toya For-Schleifen im Stil von Java anbietet, hat Kotlin eine deutlich kompaktere, aber auch flexiblere Syntax um über eine Menge zu iterieren. So hat die Benutzer:in die Möglichkeit entweder über einen \texttt{int}-Bereich oder auch über eine Enumeration zu iterieren. Ein wesentlicher Unterschied zu Java hinsichtlich For-Schleifen ist die Abwesenheit des Inkrement Operators in \toya. Stattdessen muss die Inkrementierung mithilfe des Zuweisungs- und Additions-Operator erfolgen, zum Beispiel: \texttt{i = i+1}.
 
 \begin{KotlinCode}[numbers=none, caption={Einfache For-Schleife in Kotlin}]
 for (i in 0..10 step 2) {
-    print(i)
+    println(i)
 }
 \end{KotlinCode}
+
+\begin{ToyaCode}[numbers=none, caption={Einfache For-Schleife in toya}]
+for (var i = 0; i <= 10; i = i+2) {
+    print(i)
+}
+\end{ToyaCode}
