@@ -222,7 +222,9 @@ fun generate(statement: Statement, scope: Scope) {
 }
 \end{KotlinCode}
 
-Die JVM ist eine Stack-basierte virtuelle Maschine. Das bedeutet, dass ein Operanden-Stack existiert, auf welchen alle Werte, die die Bytecode Anweisungen benötigen, liegen.
+Die JVM ist eine Stack-basierte virtuelle Maschine. Benötigt eine Bytecode Anweisung einen Wert als Parameter, so bezieht es diesen vom Operanden-Stack. Die Anweisung \texttt{IADD} nimmt zum Beispiel die beiden obersten Werte vom Stack und addiert diese. Das Ergebnis liegt anschließend wieder am Stack.
+
+Zum Erzeugen von Methoden und Anweisungen innerhalb dieser Methoden bietet ASM die Klasse \texttt{MethodWriter}. Diese Klasse ermöglicht das Schreiben der Bytecode Anweisungen innerhalb einer Methode. Außerdem ermöglicht \texttt{MethodWriter} das Setzen von \textit{Labels} umd Sprung-Befehle durchführen zu können. Sprung-Befehle sind für den Kontrollfluss wichtig, um in If-Verzweigungen nicht besuchte Zweige zu überspringen und um bei For-Schleifen an den Beginn der Schleife zurückzukehren.
 
 \begin{KotlinCode}[numbers=none, caption={\texttt{generate()} Funktion, welche Wert-Literale erzeugt.}]
 private fun generate(value: Value) {
