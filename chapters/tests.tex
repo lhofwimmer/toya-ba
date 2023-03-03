@@ -270,9 +270,6 @@ function main(args: string[]) {
     var n = 200
 
     for (var i = 0; i <= n; i = i+10) {
-        if (i == 20) {
-            print("i is 20:")
-        }
         print(i)
     }
 }
@@ -292,28 +289,17 @@ public class Main {
             11: iconst_0
             12: goto          16
             15: iconst_1
-            16: ifeq          59
-            19: iload_2
-            20: ldc           #9    // int 20
-            22: if_icmpeq     29
-            25: iconst_0
-            26: goto          30
-            29: iconst_1
-            30: ifne          36
-            33: goto          44
-            36: getstatic     #15   // Field java/lang/System.out:Ljava/io/PrintStream;
-            39: ldc           #17   // String i is 20:
-            41: invokevirtual #23   // Method java/io/PrintStream.println:(Ljava/lang/String;)V
-            44: getstatic     #15   // Field java/lang/System.out:Ljava/io/PrintStream;
-            47: iload_2
-            48: invokevirtual #26   // Method java/io/PrintStream.println:(I)V
-            51: iload_2
-            52: ldc           #27   // int 10
-            54: iadd
-            55: istore_2
-            56: goto          6
-            59: return
-}
+            16: ifeq          34
+            19: getstatic     #14   // Field java/lang/System.out:Ljava/io/PrintStream;
+            22: iload_2
+            23: invokevirtual #20   // Method java/io/PrintStream.println:(I)V
+            26: iload_2
+            27: ldc           #21   // int 10
+            29: iadd
+            30: istore_2
+            31: goto          6
+            34: return
+}      
 \end{JavaCode}
 
 \begin{ToyaCode}[numbers=none, caption={Konsolen-Ausgabe der For-Schleife}]
@@ -370,7 +356,7 @@ function main(args: string[]) {
 }
 \end{ToyaCode}
 
-Da das Anzeigen des Bytecodes bei diesem umfangereicheren Beispiel zu lange ist und alle Fragmente in den anderen Tests bereits zu sehen ist, wird der Bytecode an dieser Stelle ausgelassen
+Da das Anzeigen des Bytecodes bei diesem umfangereicheren Beispiel zu lange ist und alle Fragmente in den anderen Tests bereits zu sehen sind, wird der Bytecode an dieser Stelle ausgelassen.
 
 \begin{ToyaCode}[numbers=none, caption={Konsolen-Ausgabe des umfangereicheren Beispiels}]
 Welcome to a simple toya program
