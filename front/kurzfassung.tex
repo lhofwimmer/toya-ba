@@ -1,3 +1,11 @@
 \chapter{Kurzfassung}
 
+\Toya ist eine stark typisierte, turing\-vollständige Programmiersprache für die \textit{Java Virtual Machine} (JVM). \Toya erlaubt die Erstellung von Funktionen, Variablen, arithmetischen Ausdrücken und primitiven Kontrollstrukturen in Form von if-Verzweigungen und for-Schleifen.
 
+Variablen können vom Typ \texttt{int}, \texttt{double}, \texttt{string} oder \texttt{boolean} sein. Ebenso ist es möglich, Felder dieser Typen anzulegen. Die explizite Angabe des Variablentyps ist mit Ausnahme von Feldern nicht möglich. Stattdessen ermittelt \toya anhand des zugewiesenen Ausdrucks den Typ der Variable.
+
+Der Compiler für \toya ist in zwei Teile zu unterteilen: Frontend und Backend. Das Frontend kümmert sich um die Verarbeitung des Quelltext um daraus einen abstrakten Syntaxbaum zu erzeugen. Das Backend erzeugt anschließend anhand des abstrakten Syntaxbaum Bytecode für die JVM. Als Produkt liefert \toya class-Dateien, die die JVM verarbeitet und auswertet. Der Compiler für \toya ist vollständig in Kotlin/JVM implementiert.
+
+Das Frontend verwendet als zentrale Bibliothek ANTLR in der vierten Version. ANTLR ist ein Parser-Generator, der anhand einer Grammatik-Datei, die die Struktur von \toya beschreibt, einen Parser in Form des Visitor-Entwurfsmuster erzeugt. Anhand dieses generierten Parsers durchläuft \toya den umfangreichen von ANTLR erzeugten Syntaxbaum und liefert einen abstrakten Syntaxbaum, der unter anderem nun Typinformationen besitzt. Mithilfe des Typsystem von Kotlin unterscheidet das Backend anschließend zwischen den verschiedenen Strukturen von \toya.
+
+Das Backend verwendet als zentrale Bibliothek ObjectWeb ASM zum Generieren von Bytecode und class-Dateien. Als erstes erzeugt \toya eine einzelne Klasse \texttt{Main}, in welcher alle Funktionen eines \toya Programms liegen. Selbst, wenn ein \toya Programm über mehrere Dateien verteilt ist, erzeugt der Compiler nur eine class-Datei. Anschließend durchläuft das Backend den abstrakten Syntaxbaum. Jede Klasse des abstrakten Syntaxbaums besitzt eine Generierungs-Funktion, die den richtigen Bytecode für den Knoten des abstrakten Syntaxbaum erzeugt. Sobald der abstrakte Syntaxbaum fertig durchlaufen ist, erzeugt \toya eine ausführbare class-Datei.

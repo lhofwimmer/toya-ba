@@ -5,6 +5,8 @@ ANTLR (\textbf{AN}other \textbf{T}ool for \textbf{L}anguage \textbf{R}ecognition
 
 ANTLR findet auch im professionellen Umfeld Verwendung. So verwendet Twitter ANTLR zur Syntax-Analyse von über 2 Milliarden Suchanfragen pro Tag. Hadoop verwendet ANTLR zur Syntax-Analyse von \textit{Hive} und \textit{Pig} und Netbeans analysiert den Syntax von \textit{C++} mithilfe ANTLR. 
 
+Adaptive LL(*) Parsing stellt den größten Unterschied zwischen Version drei und vier von ANTLR dar. ALL(*) ist ein neuer von Terrence Parr entwickelter Parsing-Ansatz, welcher theoretisch zwar eine Laufzeitkomplexität von $\mathcal{O}(n^4)$ hat, praktisch gesehen aber lineare Performanz aufweist. Im Gegensatz zum traditionellen LL- oder LR-Parsing, das auf einer vordefinierten Grammatik basiert, analysiert ALL(*) die gesamte Eingabe, um das Parsing-Entscheidungsdiagramm zu konstruieren, das zur Analyse der PEG verwendet wird. ALL(*) verwendet eine Technik namens adaptive Vorwärtsanalyse, um den automatisch erzeugten Parsing-Entscheidungsbaum zu verbessern. Diese Technik kombiniert Vorwärts- und Rückwärtsanalyse, um die Vorhersage der nächsten Token zu verbessern.
+
 Der große Vorteil von ANTLR gegenüber selbst entwickelten Lösungen zum Erzugen von Syntaxbäumen ist die Effizienz mit welcher neue Grammatikregeln definiert werden können. Diese Effizienz und Leichtigkeit in der Umsetzung hat jedoch auch seine Kosten. Da ANTLR einen umfangreichen Syntaxbaum erzeugt und es sehr unwahrscheinlich ist, dass das Programm alle Daten des Syntaxbaums benötigt, kommt es zu einem Mehraufwand für Daten, die keinen Nutzen finden.
 
 Deswegen verwenden alle größeren Programmiersprachen (C++, Python, C\#, Java, etc.) selbst entwickelte Lexer und Parser um eine substantielle Reduktion der Übersetzungszeiten zu erreichen.
@@ -20,10 +22,6 @@ Nun stellt sich die Frage: Wieso nicht auf reguläre Ausdrücke zurückgreifen? 
 
 % Welche Sprachen unterstützt https://github.com/antlr/antlr4/blob/master/doc/targets.md
 % Differences Antlr 3 und 4: https://github.com/antlr/antlr4/blob/master/doc/faq/general.md
-
-\section{ALL(*) Parsing}
-
-Adaptive LL(*) Parsing stellt den größten Unterschied zwischen ANTLR3 und ANTLR4 dar.
 
 \section{Grammatik-Definition}
 
@@ -47,7 +45,7 @@ WHITESPACE : [ \t\n\r]+ -> skip ;
 
 \section{Listener}
 
-Um die Ergebnisse des Syntaxbaums abarbeiten zu können, bietet ANTLR zwei Entwurfsmuster an: \visitor und \listener. Diese erzeugt die Benutzer:in mithilfe des Kommandozeilen-Werkzeug \texttt{antlr4}. Die Implementierung für diese Entwurfsmuster erzeugt das Werkzeug dann in einem benutzerdefiniertem Ordner anhand der angegebenen Grammatik-Datei. Außerdem gibt die Benutzer:in zusätzlich noch an, ob entweder die Implementierung für Visitor oder Listener oder für Beide zu generieren sind. Sollen keine \listener generiert werden, ist dies via dem Argument \texttt{-no-listener} anzugeben.
+Um die Ergebnisse des Syntaxbaums abarbeiten zu können, bietet ANTLR zwei Entwurfsmuster an: \visitor und \listener. Die Implementierung dieser Entwurfsmuster erzeugt die Benutzer:in mithilfe des Kommandozeilen-Werkzeug \texttt{antlr4} anhand der anzugebenden Grammatik-Datei. Außerdem gibt die Benutzer:in zusätzlich noch an, ob entweder die Implementierung für Visitor oder Listener oder für Beide zu generieren sind. Sollen keine \listener generiert werden, ist dies via dem Argument \texttt{-no-listener} anzugeben.
 
 \listener haben im Gegensatz zum \visitor keinen Einfluss auf den Analyse-Vorgang. Stattdessen ruft der \textit{Tree Walker}, der den Syntaxbaum traversiert, die von ANTLR generierten Methoden für den richtigen Knotentyp anhand der Analyse-Regeln auf. Diese Methoden des \listeners liefern keinen Wert zurück, was die Verwaltung eines abstrakten Syntaxbaums erschwert. Aufgrund der Komplexität von \toya sind \listener daher nicht empfehlenswert.
 

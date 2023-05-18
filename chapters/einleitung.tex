@@ -1,3 +1,24 @@
 \chapter{Einleitung}
 \label{cha:Einleitung}
 
+Compiler sind ein essenzieller Grundstein der Informatik und stellen das Bindeglied zwischen Mensch und Maschine dar. Erst durch sie wird die Entwicklung von höheren Programmiersprachen und Programmen einer Größenordnung möglich, die unsere moderne Welt im 21. Jahrhundert abverlangt. Ohne Compiler wäre die kommerzielle Entwicklung von Software unvorstellbar. Sie sind eine logische Schlussfolgerung, aus der Not gedrungen heraus immer effizienter werdende Anwendungen zu entwickeln. So weit, dass die Anweisungen an den Computer als lesbares Englisch verstanden werden kann. Im Zeitalter der kollaborativen Entwicklung gilt es, Programme nicht nur zu schreiben, sondern auch für sich selbst und Kolleg:innen lesbar zu machen. All diese Aspekte laufen darauf hinaus, dass Compiler die einzige Lösung sind.
+
+Dementsprechend ist es Elementar, die Funktionsweise und Abläufe von Compilern zu verstehen. Der beste Weg, um dies zu bewerkstelligen, ist einen Compiler selbst zu schreiben.
+
+\section{Zielsetzung}
+
+Ziel dieser Arbeit ist es, eine neue Programmiersprache und einen entsprechenden Compiler dafür zu entwickeln. Dieser Compiler erzeugt Bytecode für die Java Virtual Machine, um \toya-Programme anschließend plattformunabhängig ausführen zu können. \Toya soll die Definition von Funktionen, primitiven Variablen und Feldern und Kontrollflüssen in Form von Verzweigungen und Schleifen erlauben. Daraus ergibt sich eine Turing-vollständige Programmiersprache, aus welcher heraus theoretisch alle anderen Programmiersprachen entstehen könnten. \Toya orientiert sich syntaktisch an Programmiersprachen wie C und Java mit einem Fokus auf Simplizität.
+
+\section{Wieso die JVM?}
+
+Eine grundsätzliche Frage, die es vor der eigentlichen Arbeit zu beantworten galt, war ob das Kompilat des \toya Compilers Maschinencode direkt oder ein Zwischenprodukt in Form von Bytecode für eine virtuelle Maschine produzieren sollte. Während der native Ansatz mit Maschinencode den Vorteil der Ausführungsgeschwindigkeit bringt, kommt auch der Nachteil der Implementierungskomplexität des Compilers einher.
+
+Virtuelle Maschinen hingegen bieten eine Abstraktionsschicht über Maschinencode und machen die Entwicklung eines Compilers daher wesentlich leichter. Das ermöglicht, den Fokus auf andere Aspekte, wie die Verarbeitung des Syntaxbaums und die Generierung des Bytecodes zu legen, was auch im Verlauf dieser Arbeit klar zu erkennen ist.
+
+Damit wurde klar, dass eine virtuelle Maschine die Ausgabe des Compilers interpretieren sollte. Unklar war jedoch weiterhin, welche virtuelle Maschine das Ziel sein sollte. Aufgrund der Menge an verfügbaren Resourcen, beschränkte sich diese Entscheidung auf die Java Virtual Machine und Common Language Runtime. Zweiteres bringt einige Vorteile, wie zum Beispiel, dass Typinformationen generischer Typen zur Laufzeit erhalten bleiben. \Toya nutzt jedoch nur einen Bruchteil aller möglichen Eigenschaften, weswegen dies keine entscheidende Rolle bei der Entscheidungfindung spielte. Schlussendlich fiel die Entscheidung auf die Java Virtual Machine aufgrund von Familiarität damit, könnte jedoch ebenso mit der Common Language Runtime implementiert werden.
+
+\section{Aufbau der Arbeit}
+
+Die Arbeit beschäftigt sich zuerst mit den theoretischen Grundlagen von \toya und den Werkzeugen, denen \toya zugrunde liegt. Anschließend werden konkrete Implementierungsdetails präsentiert und die Funktionalität der Sprache anhand von Beispielen bewiesen.
+
+Das Kapitel \textit{Programmiersprache toya} stellt die Spezifikation der Sprache dar und bietet eine abstrakte Beschreibung der von \toya, ohne jedoch auf Implementierungsdetails einzugehen. Anschließend kommt es im Kapitel "Vergleich mit Kotlin" zur Gegenüberstellung mit einer etablierten Programmiersprache. Hierbei wurde Kotlin gewählt, da es sich dabei um die Implementierungssprache des \toya-Compilers handelt. Die Kapitel "Generierung des Syntaxbaums" und "JVM und Bytecode" bieten eine theoretische Beschreibung von ANTLR und der JVM. Das Kapitel "Implementierung" geht auf Implementierungsdetails des Compilers ein und bietet konkreten Einblick in Architektur anhand von Codebeispielen und Diagrammen. "Tests" zeigt die Funktionalität von \toya anhand von konkreten Codebeispielen und deren Ausgaben.
