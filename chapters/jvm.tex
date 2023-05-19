@@ -56,10 +56,10 @@ do {
 
 \end{JavaCode}
 
-Anweisungscodes sind für die verschiedenen Typen der JVM separat implementiert. Will die Entwickler:in zum Beispiel zwei Variablen vom Typ \texttt{int} und \texttt{double} laden, um diese später zu addieren, müssen diese im ersten Schritt mit den beiden Anweisungscodes \texttt{iload} und \texttt{dload} geladen werden. Nach dem Laden der beiden Werte liegen diese nun am Operanden Stack. 
+Anweisungscodes sind für die verschiedenen Typen der JVM separat implementiert. Will die Entwickler:in zum Beispiel zwei Variablen vom Typ \texttt{int} und \texttt{double} laden, um diese später zu addieren, müssen diese im ersten Schritt mit den beiden Anweisungscodes \texttt{iload} und \texttt{dload} geladen werden. Nach dem Laden der beiden Werte liegen diese nun am Operanden-Stack. 
 
-Da es sich dabei um zwei verschieden Typen handelt, konvertiert man den kleineren Typ (in diesem Fall \texttt{int}) zum größeren Typ mit dem Anweisungscode \texttt{i2d}. Vom Namen lässt sich ableiten, dass diese Anweisung die Ganzzahl zu einer Gleitkommazahl konvertiert. Wichtig hierbei ist, dass der zu konvertierende Wert oben am Operanden Stack aufliegen muss, da die Operation \texttt{i2d} den obersten Wert des Operanden Stack entnimmt und den konvertierten Wert anschließend zurücklegt.
+Da es sich dabei um zwei verschieden Typen handelt, konvertiert man den kleineren Typ (in diesem Fall \texttt{int}) zum größeren Typ mit dem Anweisungscode \texttt{i2d}. Vom Namen lässt sich ableiten, dass diese Anweisung die Ganzzahl zu einer Gleitkommazahl konvertiert. Wichtig hierbei ist, dass der zu konvertierende Wert oben am Operanden-Stack aufliegen muss, da die Operation \texttt{i2d} den obersten Wert des Operanden-Stack entnimmt und den konvertierten Wert anschließend zurücklegt.
 
-Mit zwei Gleitkommawerten kann man nun anschließend \texttt{dadd} aufrufen. Diese Operation entnimmt die beiden obersten Werte dem Operanden Stack, errechnet die Summe und legt diese anschließend wieder auf den Operanden Stack.
+Mit zwei Gleitkommawerten kann man nun anschließend \texttt{dadd} aufrufen. Diese Operation entnimmt die beiden obersten Werte dem Operanden-Stack, errechnet die Summe und legt diese anschließend wieder auf den Operanden-Stack.
 
 All diese Operationen sind für alle weiteren Typen der JVM definiert und sind der Spezifikation zu entnehmen. Die Größe aller Anweisungscodes ist zugunsten der Kompaktheit auf ein Byte beschränkt. Daraus ergibt sich eine maximale Anzahl von 256 Anweisungscodes.

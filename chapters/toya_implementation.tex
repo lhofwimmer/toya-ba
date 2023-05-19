@@ -245,7 +245,6 @@ Wichtige \textit{sealed classes} und \textit{sealed interfaces} des abstrakten S
     \item \texttt{BooleanExpression}: Umfasst Ausdrücke für die logischen Operatoren \texttt{Und} und \texttt{Oder}. Eine \texttt{BooleanExpression} liefert immer einen boole'schen Wert zurück.
     \item \texttt{ComparativeExpression}: Umfasst Ausdrücke für Größer, Größer-Gleich, Gleich, Kleiner, Kleiner-Gleich und Ungleich. Eine \texttt{ComparativeExpression} liefert immer einen boole'schen Wert zurück.
     \item \texttt{Branch}: Umfasst die beiden Möglichkeiten, Verzweigungen im Kontrollfluss entweder als Anweisungsblock oder als einzelnen Ausdruck zu definieren.
-    \item 
 \end{itemize}
 
 \subsection{Architektur der Code-Generierung}
@@ -254,16 +253,20 @@ Der Ablauf der Code-Generierung ist auf fünf Klassen aufgeteilt. Als Einstiegsp
 
 Der \texttt{FunctionGenerator} iteriert über die Liste aller Anweisungen der Funktion und ruft für jede Anweisung die \texttt{generate}-Funktion des \texttt{StatementGenerator auf}. Nach dem durchlaufen der Anweisungsliste überprüft der \texttt{FunctionGenerator}, ob die Funktion als letzte Anweisung eine Rückgabeanweisung definiert und ob die Funktion überhaupt einen Wert zurückliefert. Liefert nun die Funktion einen Wert zurück, hat aber keine Rückgabeanweisung an letzter Stelle, ist diese Anweisung zu generieren. Anhand des Typs der letzten Anweisung der Funktion wählt der \texttt{FunctionGenerator} nun den richtigen Anweisungscode aus und generiert die Anweisung mithilfe von ObjectWeb ASM. Ist die letzte Anweisung zum Beispiel eine Ganzzahl, generiert \toya den Anweisungscode \texttt{IRETURN}.
 
+Der \texttt{StatementGenerator} generiert entweder eine Anweisung selbst oder delegiert diese Aufgabe an den \texttt{ExpressionGenerator}, wenn es sich bei der Anweisung um einen Ausdruck handelt. Konkret generiert \texttt{StatementGenerator} Bytecode für Variablen- und Felddeklarationen, Variablenzuweisungen, explizite Rückgabeanweisungen und For-Schleifen. Ein Großteil der Komplexität in dieser Klasse stammt daher, dass verschiedene Anweisungscodes für die verschiedenen Typen von \toya zu beachten sind.
+
 \begin{figure}[h]
-    \caption{Compiler-Architektur}
+    \caption{Ablauf der Code-Generierung im Backend.}
     \centering
-    \includegraphics[width=\textwidth]{Backend.Flowchart}
-    \label{fig:compiler-architecture}
+    \includegraphics[scale=0.3]{Backend.Flowchart}
+    \label{fig:backend-flowchart}
 \end{figure}
 
-Der \texttt{StatementGenerator} generiert entweder eine Anweisung selbst oder delegiert diese Aufgabe an den \texttt{ExpressionGenerator}, wenn es sich bei der Anweisung um einen Ausdruck handelt. Konkret generiert \texttt{StatementGenerator} Bytecode für Variablen- und Felddeklarationen, Variablenzuweisungen, explizite Rückgabeanweisungen und For-Schleifen. Ein Großteil der Komplexität in dieser Klasse stammt daher, dass verschiedene Anweisungscodes für die verschiedenen Typen von \toya zu beachten sind. Um den Mehraufwand für die Berücksichtigung jedes Typs so gut wie möglich zu minimieren, sind die Erweiterungsfunktionen \texttt{Type.handleTypeGroup()} und \texttt{Type.handleTypeArrays()} definiert. Diese beiden Funktionen höherer Ordnung benötigen eine Funktion für jeden Typ als Parameter. Dadurch liegt in jeder Funktion nur der Code, der für den entsprechenden Typ relevant ist.
+Um den Mehraufwand für die Berücksichtigung jedes Typs so gut wie möglich zu minimieren, sind die Erweiterungsfunktionen \texttt{Type.handleTypeGroup()} und\break \texttt{Type.handleTypeArrays()} definiert. Diese beiden Funktionen höherer Ordnung benötigen eine Funktion für jeden Typ als Parameter. Dadurch liegt in jeder Funktion nur der Code, der für den entsprechenden Typ relevant ist.
 
-\begin{KotlinCode}[numbers=none, caption={Die Erweiterungsfunktion \texttt{Type.handleTypeArrays} in Verwendung, um den richtigen Anweisungscode zu ermitteln.}]
+Ebenso ist auch die Ausnahmebehandlung mithilfe dieser Funktionen umsetzbar. Versucht man zum Beispiel zwei Referenzen oder Boole'sche Ausdrücke zu addieren, tritt der Ausnahmezustand \texttt{UnsupportedOperationOnTypeException} ein. Dadurch, dass Verhalten für jeden Typ verpflichtend definiert sein muss, vermeidet die Entwickler:in auch, dass das Verhalten für einen Typ ungeklärt bleibt.
+
+\begin{KotlinCode}[numbers=none, caption={Verwendung der Erweiterungsfunktion \texttt{Type.handleTypeArrays()}, um den richtigen Anweisungscode zum Speichern einer Variable zu ermitteln.}]
 val opcode = localVariable.type.handleTypeArrays(
     ia = { Opcodes.IASTORE },
     da = { Opcodes.DASTORE },
@@ -272,13 +275,7 @@ val opcode = localVariable.type.handleTypeArrays(
 )
 \end{KotlinCode}
 
-Der \texttt{ExpressionGenerator} generiert Ausdrücke und Standardfunktionen. Konkret generiert der \texttt{ExpressionGenerator} Bytecode für Variablen- und Funktionsaufrufe, Funktions
-
-
-
-Die JVM ist eine Stack-basierte virtuelle Maschine. Benötigt eine Bytecode Anweisung einen Wert als Parameter, so bezieht es diesen vom Operanden-Stack. Die Anweisung \texttt{IADD} nimmt zum Beispiel die beiden obersten Werte vom Stack und addiert diese. Das Ergebnis liegt anschließend wieder am Stack.
-
-
+Der \texttt{ExpressionGenerator} generiert Ausdrücke oder delegiert Standardfunktionsaufrufe an den \texttt{StandardFunctionGenerator}. Konkret generiert dieser Generator Bytecode für Variablen- und Funktionsaufrufe, Funktionsargumente, Wertliterale, arithmetische Operationen, Vergleichs- und Logikoperationen, Null-Ausdrücke, Zugriff auf Felder und If-Ausdrücke. Ist der konkrete Typ des Ausdrucks \texttt{PrintFunction}, delegiert der \texttt{ExpressionGenerator} die Bytecode-Generierung an den \texttt{StandardFunctionGenerator}.
 
 Der \texttt{StandardFunctionGenerator} generiert alle Standardfunktionen. Im Falle der \texttt{PrintFunction} verwendet \toya die \texttt{System.out.println} Implementierung von Java. In einem ersten Schritt ermittelt \toya die Referenz des \texttt{PrintSteam} Typs in Form der statischen Variable \texttt{out} und evaluiert \toya den Wert des Ausdrucks, der auszugeben ist. Anschließend wird die \texttt{println} Funktion des \texttt{out} Objekts aufgerufen. Die \texttt{println} Funktion verwendet den oben aufliegenden Wert am Operanden-Stack, weswegen dieser Wert im ersten Schritt bereits evaluiert wurde.
 
