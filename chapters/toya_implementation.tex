@@ -40,7 +40,7 @@ antlr4 -o C:\home\Lukas\projects\toya\src\main\java\gen \
 
 \subsection{Abarbeitung des Syntaxbaum}
 
-Wie bereits im Kapitel Generierung des Syntaxbaum\ref{cha:antlr} erläutert, bietet ANTLR die Entwurfsmuster \visitor und \listener an, um den Syntaxbaum zu traversieren. \Toya verwendet das \visitor-Muster aufgrund des Umfangs des zu traversierenden Syntaxbaums. Das Resultat des \visitors ist ein AST mit dem Wurzelelement \texttt{Compilation}. Diese Klasse speichert die Funktionssignaturen, globale Variablen und ein globales \scope, welches sich über das ganze Programm erstreckt. Alle weiteren \texttt{Scopes} nehmen dieses globale \scope als Grundlage. 
+Wie bereits im Kapitel \ref{cha:antlr} erläutert, bietet ANTLR die Entwurfsmuster \visitor und \listener an, um den Syntaxbaum zu traversieren. \Toya verwendet das \visitor-Muster aufgrund des Umfangs des zu traversierenden Syntaxbaums. Das Resultat des \visitors ist ein AST mit dem Wurzelelement \texttt{Compilation}. Diese Klasse speichert die Funktionssignaturen, globale Variablen und ein globales \scope, welches sich über das ganze Programm erstreckt. Alle weiteren \texttt{Scopes} nehmen dieses globale \scope als Grundlage. 
 
 Die wichtigste Methode des \visitor, welche die Abarbeitung des Syntaxbaums überhaupt ermöglicht ist die \texttt{accept()} Methode. Diese Methode benötigt als Parameter einen \visitor vom generischen Typ \texttt{ParseTreeVisitor}. \Toya implementiert folgende \visitor:
 
@@ -54,7 +54,7 @@ Die wichtigste Methode des \visitor, welche die Abarbeitung des Syntaxbaums übe
     \item FunctionVisitor
 \end{itemize}
 
-Zum traversieren des Syntaxbaums generiert ANTLR für jede Regel in der Grammatik-Definition eine Methode im Format \texttt{visit<RuleName>(ctx: toyaParser.<RuleName>Context)}. Jede dieser Methoden liefert einen Wert zurück, der dem generischen Typ des \texttt{toyaBaseVisitor} entspricht.
+Um das traversieren der Knoten des Syntaxbaums zu ermöglichen, generiert ANTLR für alle Regeln der Grammatik-Definition Methoden im Format \texttt{visit<RuleName>(ctx: toyaParser.<RuleName>Context)}. Jede dieser Methoden liefert einen Wert vom generischen Typ des \texttt{toyaBaseVisitor} zurück.
 
 \begin{KotlinCode}[numbers=none, caption={\visitor-Funktion zum Erstellen eines \texttt{VariableDeclarationStatement}}]
 class StatementVisitor(val scope: Scope) : toyaBaseVisitor<Statement>() {
@@ -69,7 +69,7 @@ class StatementVisitor(val scope: Scope) : toyaBaseVisitor<Statement>() {
 }
 \end{KotlinCode}
 
-Befinden sich Syntaxfehler im Quelltext, bietet ANTLR die Basisklasse \texttt{BaseErrorListener} um der Benutzer:in relevante Informationen anzuzeigen. \Toya zeigt mithilfe dieser Klasse an, welche Anweisung in welcher Zeile und welches Zeichen syntaktische syntaktische Analyse verhindert.
+Zur Behandlung von Syntaxfehler bietet ANTLR die Klasse \texttt{BaseErrorListener} um der Benutzer:in relevante Informationen anzuzeigen. \Toya zeigt mithilfe dieser Klasse an, welche Anweisung in welcher Zeile und welches Zeichen syntaktische Analyse verhindert.
 
 \begin{KotlinCode}[numbers=none, caption={Erstellen des \visitor}]
 class Parser {
@@ -277,7 +277,7 @@ val opcode = localVariable.type.handleTypeArrays(
 
 Der \texttt{ExpressionGenerator} generiert Ausdrücke oder delegiert Standardfunktionsaufrufe an den \texttt{StandardFunctionGenerator}. Konkret generiert dieser Generator Bytecode für Variablen- und Funktionsaufrufe, Funktionsargumente, Wertliterale, arithmetische Operationen, Vergleichs- und Logikoperationen, Null-Ausdrücke, Zugriff auf Felder und If-Ausdrücke. Ist der konkrete Typ des Ausdrucks \texttt{PrintFunction}, delegiert der \texttt{ExpressionGenerator} die Bytecode-Generierung an den \texttt{StandardFunctionGenerator}.
 
-Der \texttt{StandardFunctionGenerator} generiert alle Standardfunktionen. Im Falle der \texttt{PrintFunction} verwendet \toya die \texttt{System.out.println} Implementierung von Java. In einem ersten Schritt ermittelt \toya die Referenz des \texttt{PrintSteam} Typs in Form der statischen Variable \texttt{out} und evaluiert \toya den Wert des Ausdrucks, der auszugeben ist. Anschließend wird die \texttt{println} Funktion des \texttt{out} Objekts aufgerufen. Die \texttt{println} Funktion verwendet den oben aufliegenden Wert am Operanden-Stack, weswegen dieser Wert im ersten Schritt bereits evaluiert wurde.
+Der \texttt{StandardFunctionGenerator} generiert alle Standardfunktionen. Im Falle der \texttt{PrintFunction} verwendet \toya die \texttt{System.out.println} Implementierung von Java. In einem ersten Schritt ermittelt \toya die Referenz des \texttt{PrintSteam} Typs in Form der statischen Variable \texttt{out} und evaluiert \toya den Wert des Ausdrucks, der auszugeben ist. Anschließend wird die \texttt{println} Funktion des \texttt{out} Objekts aufgerufen. Die \texttt{println} Funktion verwendet den oben aufliegenden Wert am Operanden-Stack, weswegen dieser Wert im ersten Schritt bereits evaluiert wurde. Die konkrete Implementierung der Funktion wurde \textcite{enkelTutorial} entnommen.
 
 \begin{KotlinCode}[numbers=none, caption={Bytecode zum Aufruf der \texttt{println} Funktion von Java}]
 private fun generate(printFunction: PrintFunction, scope: Scope) {

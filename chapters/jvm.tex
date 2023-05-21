@@ -2,12 +2,13 @@
 \label{cha:jvm}
 
 die Java Virtual Machine (JVM) ist eine von James Gosling für Sun konzipierte und in Folge von Oracle weiterentwickelte Stack-basierte virtuelle Maschine. Die JVM ermöglicht die Ausführung von Bytecode unter Linux, MacOS und Windows. Zu Beginn für die plattformunabhängige Ausführung von Java-Code entwickelt, existiert eine Vielzahl an Programmiersprachen für die JVM. Dazu gehören neben Java unter anderem Kotlin/JVM, Scala und Clojure.
+Als Grundlage für dieses Kapitel dient \textcite{lindholm2016java}.
 
 \section{HotSpot}
 
 Neben der Übersetzung von Bytecode auf Maschinencode beinhaltet die JVM auch den \textit{Just-in-Time (JIT) Compiler HotSpot}. Sobald die Anzahl der Aufrufe einer bestimmten Methode den Schwellwert überschreitet, übersetzt \textit{HotSpot} diese Methode in Maschinencode und ersetzt den originalen Bytecode für die restliche Ausführung des Programmes. Start man das Programm neu, beginnt dieser Prozess von vorne. Dieser Prozess hat das Ziel, häufig verwendet Methoden zu optimieren, um dadurch die Laufzeit-Performanz zu erhöhen. Der Name \textit{HotSpot} stammt daher, dass heiße Regionen (engl. \textit{hotspot}) im Programm dadurch optimiert werden sollen.
 
-\textit{HotSpot} bietet zwei Stufen des \textit{JIT Compilers} an: Client (C1) und Server (C2). Der Client Compiler ist auf eine schnelle Startzeit optimiert und versucht das Programm so schnell wie möglich zu optimieren. Der Server Compiler hingegen ist auf eine hohe Leistung optimiert, weswegen das Optimierungsverfahren länger dauert, aber dafür eine höhere Programm-Performanz als Folge hat. Um nun die Vorteile von beiden Stufen ausnutzen zu können, tritt der C1 Compiler früher als der C2 Compiler in Kraft und erst sobald ein höherer Schwellwert erreicht ist, kommt es zur Optimierung durch den C2 Compiler. Die JIT-Optimierung ist in fünf Stufen aufgeteilt:
+\textit{HotSpot} bietet zwei Stufen des \textit{JIT Compilers} an: Client (C1) und Server (C2) \parencite{jvmhotspot}. Der Client Compiler ist auf eine schnelle Startzeit optimiert und versucht das Programm so schnell wie möglich zu optimieren. Der Server Compiler hingegen ist auf eine hohe Leistung optimiert, weswegen das Optimierungsverfahren länger dauert, aber dafür eine höhere Programm-Performanz als Folge hat. Um nun die Vorteile von beiden Stufen ausnutzen zu können, tritt der C1 Compiler früher als der C2 Compiler in Kraft und erst sobald ein höherer Schwellwert erreicht ist, kommt es zur Optimierung durch den C2 Compiler. Die JIT-Optimierung ist in fünf Stufen aufgeteilt:
 \begin{itemize}
     \item Stufe 0: Die JVM nimmt keine Optimierungen vor, erhebt aber Statistiken für die Optimierung in den weiteren Stufen.
     \item Stufe 1 (C1): Die JVM kompiliert triviale Methoden, erhebt in dieser Stufe aber keine Statistiken.
@@ -20,7 +21,7 @@ Entscheidet sich die Entwickler:in gegen Verwendung der gestuften Kompilierung, 
 
 \section{Classloader}
 
-Die Aufgabe des Classloader ist es, Klassen bei Bedarf dynamisch während der Laufzeit nachzuladen und zu verknüpfen. Classloader sind in einer Baumstruktur aufgebaut, an dessen Wurzel der \textit{Bootstrap}-Classloader steht. Dieser \textit{Bootstrap}-Classloader lädt interne Klassen der Java Plattform und ist Ausgangsbasis für alle weiteren Classloader. Neben dem \textit{Bootstrap}-Classloader gibt es standardmäßig noch den Erweiterungs- und System-Classloader. Der Erweiterungs-Classloader lädt Erweiterungen der primären Java Klassen. Der System-Classloader hat als Aufgabe, Klassen des ausgeführten Java-Programms, der \texttt{Classpath}-Umgebungsvariable und des Classpath-Kommandozeilenparameter nachzuladen.
+Die Aufgabe des Classloader ist es, Klassen bei Bedarf dynamisch während der Laufzeit nachzuladen und zu verknüpfen. Classloader sind in einer Baumstruktur aufgebaut, an dessen Wurzel der \textit{Bootstrap}-Classloader steht. Dieser \textit{Bootstrap}-Classloader lädt interne Klassen der Java Plattform und ist Ausgangsbasis für alle weiteren Classloader. Neben dem \textit{Bootstrap}-Classloader gibt es standardmäßig noch den Erweiterungs- und System-Classloader. Der Erweiterungs-Classloader lädt Erweiterungen der primären Java Klassen. Der System-Classloader hat als Aufgabe, Klassen des ausgeführten Java-Programms, der \texttt{Classpath}-Umgebungsvariable und des Classpath-Kommandozeilen\-parameter nachzuladen.
 
 \section{Laufzeitdatenbereiche}
 
@@ -53,7 +54,6 @@ do {
     if (operands) fetch operands;
     execute the action for the opcode;
 } while (there is more to do);
-
 \end{JavaCode}
 
 Anweisungscodes sind für die verschiedenen Typen der JVM separat implementiert. Will die Entwickler:in zum Beispiel zwei Variablen vom Typ \texttt{int} und \texttt{double} laden, um diese später zu addieren, müssen diese im ersten Schritt mit den beiden Anweisungscodes \texttt{iload} und \texttt{dload} geladen werden. Nach dem Laden der beiden Werte liegen diese nun am Operanden-Stack. 
