@@ -14,7 +14,7 @@ Insgesamt gilt es, die einzelnen Sprachkonstrukte, wie zum Beispiel For-Schleife
 
 \section{Hello World}
 
-Der erste Test stellt ein \textit{Hello World} Programm dar \ref{lst:test_1_source}. Der Bytecode dieses Programms beschränkt sich auf einige wenige Befehle \ref{lst:test_1_bytecode}. Konkret laden \texttt{getstatic} und \texttt{ldc} Referenzen zum \texttt{System.out} Objekt und der auszugebenden Zeichenkette. Anschließend ruft \texttt{invokevirtual} die \texttt{println} Funktion mit der Zeichenkette auf. Als Resultat gibt dieser Test die Zeichenkette \textit{Hello World} auf der Konsole aus \ref{lst:test_1_output}.
+Der erste Test stellt ein \textit{Hello World} Programm dar, wie in~\autoref{lst:test_1_source} zu sehen ist. Der Bytecode dieses Programms beschränkt sich auf einige wenige Befehle.~\autoref{lst:test_1_bytecode} zeigt den Bytecode. Konkret laden \texttt{getstatic} und \texttt{ldc} Referenzen zum \texttt{System.out} Objekt und der auszugebenden Zeichenkette. Anschließend ruft \texttt{invokevirtual} die \texttt{println} Funktion mit der Zeichenkette auf. Als Resultat gibt dieser Test die Zeichenkette \textit{Hello World} auf der Konsole aus, zu sehen in~\autoref{lst:test_1_output}.
 
 \begin{ToyaCode}[numbers=none, caption={Quelltext des Hello World Programms},label=lst:test_1_source]
 function main(args: string[]) {
@@ -39,7 +39,7 @@ Hello World
 
 \section{Funktionen}
 
-Der zweite Test beschäftigt sich mit der Verwendung von Funktionen und dem Arbeiten mit Funktionsergebnissen. \autoref{lst:test_2_source} zeigt den Quelltext des Programms. Als erstes ruft dieser Test die \texttt{title} Funktion auf. Diese Funktion gibt die Zeichenkette \textit{This is an addition:} auf der Konsole aus. Anschließend ruft das Programm die \texttt{print} Funktion mit dem Ergebnis der \texttt{add} Funktion auf. Die \texttt{add} Funktion addiert in diesem Fall die ganzzahligen Wertliterale \texttt{1} und \texttt{2}. Dementsprechend gibt die \texttt{print} Funktion den Wert \texttt{3} auf der Konsole aus, wie in \autoref{lst:test_2_output} zu sehen ist.
+Der zweite Test beschäftigt sich mit der Verwendung von Funktionen und dem Arbeiten mit Funktionsergebnissen.~\autoref{lst:test_2_source} zeigt den Quelltext des Programms. Als erstes ruft dieser Test die \texttt{title} Funktion auf. Diese Funktion gibt die Zeichenkette \textit{This is an addition:} auf der Konsole aus. Anschließend ruft das Programm die \texttt{print} Funktion mit dem Ergebnis der \texttt{add} Funktion auf. Die \texttt{add} Funktion addiert in diesem Fall die ganzzahligen Wertliterale \texttt{1} und \texttt{2}. Dementsprechend gibt die \texttt{print} Funktion den Wert \texttt{3} auf der Konsole aus, wie in~\autoref{lst:test_2_output} zu sehen ist.
 
 Der erste Test behandelt die Ausgabe via der \texttt{print} Funktion, daher wird nicht näher darauf eingegangen. Die \texttt{add} Funktion lädt mit den Opcodes \texttt{iload\_0} und \texttt{iload\_1} die beiden ganzzahligen Parameter der Funktion. \texttt{iadd} addiert anschließend die beiden Werte und liefert diese mit \texttt{ireturn} zurück. Der vollständige Bytecode für die drei Funktionen ist in~\autoref{lst:test_2_bytecode} zu sehen.
 
@@ -93,7 +93,7 @@ This is an addition:
 
 \section{Variablen}
 
-Der dritte Test behandelt die Deklaration und Initialisierung von Variablen. Als erstes wird eine Variable pro Typ mit Wertliteralen und eine weitere Variable mit einem Funktionsergebnis angelegt, wie in~\autoref{lst:test_3_source} zu sehen ist. Anschließend wird jeder Wert auf der Konsole ausgegeben, siehe dazu \autoref{lst:test_3_output}.
+Der dritte Test behandelt die Deklaration und Initialisierung von Variablen. Als erstes wird eine Variable pro Typ mit Wertliteralen und eine weitere Variable mit einem Funktionsergebnis angelegt, wie in~\autoref{lst:test_3_source} zu sehen ist. Anschließend wird jeder Wert auf der Konsole ausgegeben, siehe dazu~\autoref{lst:test_3_output}.
 
 Die beiden Opcodes \texttt{<type>load} und \texttt{<type>store} laden und speichern respektive den Wert einer lokalen Variable. Der Bytecode ist unter~\autoref{lst:test_3_bytecode} zu sehen.
 
@@ -211,7 +211,9 @@ public class Main {
 
 \section{If-Verzweigungen}
 
-Der vierte Test behandelt die Verwendung von If-Verzweigungen als Ausdruck und Anweisung. Der erste Teil des Quelltextes verwendet die If-Verzweigung als Ausdruck um einer Variable einen Wert zuzuweisen und diese auszugeben. Der zweite Teil verwendet die If-Verzweigung als Anweisung um einen Wert auf der Konsole auszugeben. Der Quelltext ist in~\autoref{lst:test_5_source} zu sehen.
+Der fünfte Test behandelt die Verwendung von If-Verzweigungen als Ausdruck und Anweisung. Der erste Teil des Quelltextes verwendet die If-Verzweigung als Ausdruck um einer Variable einen Wert zuzuweisen und diese auf der Konsole auszugeben. Der zweite Teil verwendet die If-Verzweigung als Anweisung um eine Zeichenkette je nach Zweig auszugeben. Der Quelltext ist in~\autoref{lst:test_5_source} zu sehen.~\autoref{lst:test_5_output} zeigt die Konsolenausgabe.
+
+Im Bytecode sind die \texttt{goto} Opcodes zu beachten. Mithilfe \texttt{goto} ist der Sprung zwischen Anweisungen im Bytecode möglich. Jede Anweisung ist mit einer Nummer versehen. Diese Nummer ist bei \texttt{goto} anzugeben, um den Zielort des Sprungs zu bestimmen. Der Bytecode ist unter~\autoref{lst:test_5_bytecode} zu finden.
 
 \begin{ToyaCode}[numbers=none, caption={If-Verzweigungen},label=lst:test_5_source]
 function main(args: string[]) {
@@ -269,7 +271,9 @@ true branch
 
 \section{For-Schleifen}
 
-\begin{ToyaCode}[numbers=none, caption={For-Schleifen}]
+Der sechste Test behandelt For-Schleifen. Der Schleifenkopf initialisert und deklariert eine Zählvariable \texttt{i} mit dem Wert \texttt{0}. Nach jedem Schleifendurchlauf prüft die Abbruchbedingung, ob \texttt{i} den Wert der zuvor angelegten Variable \texttt{n} überschreitet. \texttt{n} wurde mit dem Wert \texttt{200} initialisert. Der Wert von \texttt{i} erhöht sich nach jedem Schleifendurchlauf um zehn. Im Schleifenkörper befindet sich eine \texttt{print}-Anweisung, die den Wert der Zählvariable auf der Konsole ausgibt. Der Quelltext ist in~\autoref{lst:test_6_source} zu sehen. Neben If-Verzweigungen sind \texttt{goto} Anweisungen auch bei For-Schleifen in Verwendung. Nach jedem Schleifendurchlauf springt das Programm zur Abbruchbedingung zurück. Evaluiert die Abbruchbedingung zu \texttt{true}, springt das Programm zum \texttt{return} und beendet die Ausführung. Der Bytecode ist unter~\autoref{lst:test_6_bytecode} zu sehen. Auf der Konsole sind die Werte von 0 bis 200 in zehner Inkrementen zu sehen. Die Ausgabe ist in~\autoref{lst:test_6_output} zu finden.
+
+\begin{ToyaCode}[numbers=none, caption={For-Schleifen},label=lst:test_6_source]
 function main(args: string[]) {
     var n = 200
 
@@ -279,7 +283,7 @@ function main(args: string[]) {
 }
 \end{ToyaCode}
 
-\begin{JavaCode}[numbers=none, caption={Bytecode der For-Schleife}]
+\begin{JavaCode}[numbers=none, caption={Bytecode der For-Schleife},label=lst:test_6_bytecode]
 public class Main {
     public static void main(java.lang.String[]);
         Code:
@@ -306,10 +310,9 @@ public class Main {
 }      
 \end{JavaCode}
 
-\begin{ToyaCode}[numbers=none, caption={Konsolen-Ausgabe der For-Schleife}]
+\begin{ToyaCode}[numbers=none, caption={Konsolen-Ausgabe der For-Schleife},label=lst:test_6_output]
 0
 10
-i is 20:
 20
 30
 40
@@ -332,9 +335,9 @@ i is 20:
 \end{ToyaCode}
 
 \section{Umfangreicheres Beispiel}
-Die Tests bisher beschränkten sich auf einzelne Eigenschaften von \toya. Um aber auch das Zusammenspiel von mehreren Eigenschaften zu testen, wird nun noch ein umfangreicheres Programm analysiert. Dieses Programm ruft eine Funktion auf, welche Zeichenketten auf der Konsole ausgibt, definiert Variablen von Felder und primitiven Datentypen, iteriert über eine For-Schleife, welche eine If-Verzweigung enthält und verändert und liest Felder.
+Die Tests bisher beschränkten sich auf einzelne Eigenschaften von \toya. Um aber auch das Zusammenspiel von mehreren Eigenschaften zu testen, wird nun noch ein umfangreicheres Programm getestet. Dieses Programm ruft eine Funktion auf, welche Zeichenketten auf der Konsole ausgibt, definiert Variablen von Felder und primitiven Datentypen, iteriert über eine For-Schleife, welche eine If-Verzweigung enthält und verändert und liest Felder. Der Quelltext ist in~\autoref{lst:test_7_source} zu sehen.
 
-\begin{ToyaCode}[numbers=none, caption={Quelltext des umfangereicheren Beispiels}]
+\begin{ToyaCode}[numbers=none, caption={Quelltext des umfangereicheren Beispiels},label=lst:test_7_source]
 function printIntro(n: int) {
     print("Welcome to a simple toya program")
     print("Calculating numbers up to: ")
@@ -360,9 +363,9 @@ function main(args: string[]) {
 }
 \end{ToyaCode}
 
-Da das Anzeigen des Bytecodes bei diesem umfangereicheren Beispiel zu lange ist und alle Fragmente in den anderen Tests bereits zu sehen sind, wird der Bytecode an dieser Stelle ausgelassen.
+Da das Anzeigen des Bytecodes bei diesem umfangereicheren Beispiel zu lange ist und alle Fragmente in den anderen Tests bereits zu sehen sind, wird der Bytecode an dieser Stelle ausgelassen.~\autoref{lst:test_7_output} zeigt die Konsolenausgabe des siebten Tests.
 
-\begin{ToyaCode}[numbers=none, caption={Konsolen-Ausgabe des umfangereicheren Beispiels}]
+\begin{ToyaCode}[numbers=none, caption={Konsolen-Ausgabe des umfangereicheren Beispiels},label=lst:test_7_output]
 Welcome to a simple toya program
 Calculating numbers up to:
 200
