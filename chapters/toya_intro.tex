@@ -1,7 +1,7 @@
 \chapter{Programmiersprache toya}
 \label{cha:toya}
 
-\Toya ist eine stark typisierte, turing\-vollständige Programmiersprache für die \textit{Java Virtual Machine} mit einem Fokus auf Simplizität. Der Syntax ist, wie bei C\# oder Java zum Beispiel, stark an C angelehnt. Auf die Syntax wird in diesem Kapitel bei der näheren Behandlung der einzelnen Komponenten der Sprache eingegangen. 
+\Toya ist eine stark typisierte, turing\-vollständige Programmiersprache für die \textit{Java Virtual Machine} mit einem Fokus auf Simplizität. Der Syntax ist, wie bei C\# oder Java, stark an C angelehnt. Auf die Syntax wird in diesem Kapitel bei der näheren Behandlung der einzelnen Komponenten der Sprache eingegangen. 
 
 \begin{CJK}{UTF8}{ipxm}
 Der Name \toya, in Anlehnung an Java und Kotlin, findet seinen Ursprung bei einer Insel. Dabei handelt es sich konkret um 洞爺湖 (Tōya-ko), einen Kratersee im Norden Japans, der wiederum die Insel 中島 (Nakajima) enthält. Von Tōya-ko leitet sich dann der Name \toya ab.
@@ -9,40 +9,44 @@ Der Name \toya, in Anlehnung an Java und Kotlin, findet seinen Ursprung bei eine
 
 \Toya folgt dem imperativen Programmierparadigma. Ein \toya-Programm besteht aus einer Menge an Funktionen und Variablen, wobei wie in Java eine \texttt{main}-Funktion zum Programmeinstieg notwendig ist. Klassen gibt es keine. Bei der Übersetzung werden aber alle Programmteile in eine \texttt{Main} Klasse zusammengefasst, da das resultierende Kompilat mindestens eine Klasse benötigt. Sollte die \texttt{main} Funktion nicht vorhanden sein, so wird eine Ausnahmesituation während der Syntax-Analyse erzeugt. Variablen, die außerhalb von Funktionen definiert werden, stehen global zur Verfügung. Global in diesem Kontext bedeutet, dass solche Variablen in allen Funktionen des Programms verwendet werden können.
 
-Die Benutzer:in hat die Möglichkeit, ein \toya-Programm auf mehrere Dateien aufzuteilen (zum Beispiel zur besseren Organisation). Anschließend bei der Übersetzung sind alle \texttt{toya}-Dateien anzugeben. Unabhängig von der Anzahl an Eingangs-Dateien besteht das kompilierte Programm jedoch immer aus genau einer \texttt{class}-Datei.  
+Die Benutzer:in hat die Möglichkeit, ein \toya-Programm auf mehrere Dateien aufzuteilen. Anschließend bei der Übersetzung sind alle \texttt{toya}-Dateien anzugeben. Unabhängig von der Anzahl an Eingangs-Dateien besteht das kompilierte Programm jedoch immer aus genau einer \texttt{class}-Datei.  
 
 \section{Typen}
 
-\toya stellt insgesamt fünf Typen und Felder von diesen Typen zur Verfügung. Diese sind \texttt{boolean}, \texttt{int}, \texttt{double} und \texttt{string}, wobei hierbei \texttt{int}, \texttt{boolean} und \texttt{string} eindeutig die wichtigsten sind, da jeder dieser Typen in unterschiedlichen Domänen seine Verwendung findet. Das Erstellen weiterer Typen ist nicht möglich.
+\Toya stellt insgesamt fünf Typen und Felder von diesen Typen zur Verfügung. Diese sind \texttt{boolean}, \texttt{int}, \texttt{double} und \texttt{string}. Die Auswahl der Typen beschränkt sich auf solche, die eindeutig unterschiedliche Aufgaben erfüllen. Das Erstellen weiterer Typen ist nicht möglich.
 
-Feld-Typen sind mit dem allgemein bekannten Suffix \texttt{[]} und dem Schlüsselwort \textit{new} zu deklarieren. So ist zum Beispiel der Typ eines Zeichenketten-Feld als \texttt{[]} zu schreiben. Die JVM bietet zusätzlich noch die Datentypen \texttt{byte}, \texttt{short}, \texttt{long} und \texttt{float}, aber weil alle diese Typen redundant in ihrem Aufgabenbereich sind, kommen diese nicht in \toya vor, da der Sinn von \toya nicht die vollständige Ausschöpfung aller JVM-Eigenschaften ist, sondern die explorative Implementierung einer Programmiersprache, wofür nicht alle Datentypen benötigt werden. Der \texttt{returnAddress}-Typ wird hier außer acht gelassen, weil dieser nur JVM-interne Relevanz hat.
+Feld-Typen sind mit dem allgemein bekannten Suffix \texttt{[]} und dem Schlüsselwort \textit{new} zu deklarieren. So ist zum Beispiel der Typ eines Zeichenketten-Feldes als \texttt{[]} zu schreiben.
 
-\texttt{int} hat einen Wertebereich von $-2^{31}$ bis $2^{31} - 1$; \texttt{double} folgt der IEEE-754-Spezifikation: 1 Bit für das Vorzeichen, 11 Bit für den Exponenten und 52 Bit für die Mantisse. \texttt{boolean} hat die Werte \texttt{true} und \texttt{false}. \texttt{True} wird intern als $1$ mit repräsentiert, \texttt{false} mit 0. Die JVM kennt keinen nativen Zeichenketten-Typ, da dieser als Referenz repräsentiert wird. Da \toya keine Erstellung von Typen erlaubt, sind die einzigen Referenztypen Zeichenketten und Felder. Die Bytecode-Generierung \textit{toyas} unterscheidet immer zwischen Felder und nicht-Felder, wenn es um die Auswahl der richtigen Opcodes geht, dadurch ergibt sich, dass eine Referenz, welche kein Feld ist, immer ein String sein muss. Zeichenketten werden als Literale mit doppelte Anführungszeichen definiert. So ist ein Hello World String als \texttt{``Hello World''} anzugeben.
+Die JVM bietet zusätzlich noch die Datentypen \texttt{byte}, \texttt{short}, \texttt{long} und \texttt{float}. All diese Typen sind zwar für größere Programme relevant und notwendig, überschneiden sich aber und kommen in \toya daher nicht vor. Der Sinn von \toya ist nicht die vollständige Ausschöpfung aller JVM-Eigenschaften, sondern die explorative Implementierung einer Programmiersprache. Dafür sind nicht alle Datentypen notwendig. Der \texttt{returnAddress}-Typ wird hier außer acht gelassen, weil dieser nur JVM-interne Relevanz hat.
 
-Gewisse Sprachen wie Java oder Kotlin konvertieren automatisch zwischen Typen, wenn diese zum Beispiel in arithmetischen Operationen gemischt werden. So liefert zum Beispiel eine Addition, mit einem Ganzzahl- und Gleitkomma-Operanten eine Gleitkomma-Summe. Dadurch ermöglichen diese Programmiersprachen eine gewisse Flexibilität, selbst bei statischer Typisierung. Diese automatische Konvertierung besitzt \toya nicht. Stattdessen wird das Programm in einen Ausnahmezustand versetzt, sollten verschiedene Typen in einer Operation vorkommen.
+\texttt{int} hat einen Wertebereich von $-2^{31}$ bis $2^{31} - 1$; \texttt{double} folgt der IEEE-754-Spezifikation: 1 Bit für das Vorzeichen, 11 Bit für den Exponenten und 52 Bit für die Mantisse. \texttt{boolean} hat die Werte \texttt{true} und \texttt{false}. \texttt{True} wird intern als $1$ mit repräsentiert, \texttt{false} mit 0. Die JVM kennt keinen nativen Zeichenketten-Typ, da dieser als Referenz repräsentiert wird. Da \toya keine Erstellung von Typen erlaubt, sind die einzigen Referenztypen Zeichenketten und Felder. Die Bytecode-Generierung von \toya unterscheidet immer zwischen Felder und nicht-Felder, wenn es um die Auswahl der richtigen Opcodes geht. Daraus folgt, dass eine Referenz, welche kein Feld ist, immer eine Zeichenkette sein muss. Zeichenketten werden als Literale mit doppelten Anführungszeichen definiert. So ist ein Hello World String als \texttt{``Hello World''} anzugeben.
+
+Sprachen wie Java oder Kotlin konvertieren automatisch zwischen Typen, wenn diese zum Beispiel in arithmetischen Operationen gemischt werden. So liefert eine Addition, mit einem Ganzzahl- und Gleitkomma-Operanten eine Gleitkomma-Summe. Dadurch ermöglichen diese Programmiersprachen eine gewisse Flexibilität, selbst bei statischer Typisierung. Diese automatische Konvertierung besitzt \toya nicht. Stattdessen wird das Programm in einen Ausnahmezustand versetzt, sollten verschiedene Typen in einer Operation vorkommen.
 
 \section{Funktionen}
 
-Funktionen sind die zentrale Komponente von \toya und enthalten die Programmlogik. Sie bestehen aus Funktionssignatur und Funktionskörper. Die Funktionssignatur besteht aus Funktionsname, Parameter und Rückgabewert. Der Name ist das einzig verpflichtende hierbei; Parameter und Rückgabewert sind optional. Hat eine Funktion keinen Rückgabewert, so fallen sowohl der Pfeil, als auch der nachfolgende Typ weg.
+Funktionen sind die zentrale Komponente von \toya und enthalten die Programmlogik. Sie bestehen aus Funktionssignatur und Funktionskörper. Die Funktionssignatur besteht aus Funktionsname, Parameter und Rückgabewert. Der Name ist das einzig verpflichtende hierbei; Parameter und Rückgabewert sind optional. Hat eine Funktion keinen Rückgabewert, so entfallen der Pfeil und nachfolgende Typ. In~\autoref{lst:intro_simplefunction} ist eine eine einfache Funktion zu sehen, die zwei Ganzzahlen addiert und deren Summe zurückliefert.
 
-\begin{ToyaCode}[numbers=none, caption={Eine typische Funktion unter toya.}]
+\begin{ToyaCode}[numbers=none, caption={Eine typische Funktion unter toya.}, label=lst:intro_simplefunction]
 function add(lhs: int, rhs: int) -> int {
     lhs + rhs
 }
 \end{ToyaCode}
 
-Der Funktionskörper besteht aus einer beliebige Folge an Anweisungen und Ausdrücken. Hat eine Funktion einen Rückgabewert, so kann mit \texttt{return} ein nachfolgender Ausdruck rückgegeben werden. Das Schlüsselwort \texttt{return} ist jedoch optional: Wenn die letzte Anweisung gleichzeitig ein Ausdruck und vom gefordertem Typen ist, dann wird automatisch dieser Ausdruck geliefert. Hierbei ist jedoch zu beachten, dass die Leserlichkeit erhalten bleibt.
+Der Funktionskörper besteht aus einer beliebigen Folge an Anweisungen und Ausdrücken. Hat eine Funktion einen Rückgabewert, so kann mit \texttt{return} ein nachfolgender Ausdruck rückgegeben werden. Das Schlüsselwort \texttt{return} ist jedoch optional: Wenn die letzte Anweisung gleichzeitig ein Ausdruck und vom gefordertem Typen ist, dann wird automatisch dieser Ausdruck geliefert. Hierbei ist jedoch zu beachten, dass die Leserlichkeit erhalten bleibt.
 
-Funktionen werden mit dem Syntax \texttt{function <funcname>(parameter*)} aufgerufen und sind vom Rückgabetypen der aufgerufenen Funktion. Für jeden Parameter kann jeder beliebige Ausdruck eingesetzt werden, solange der Formal- und Aktualtypp übereinstimmt.
+Der Aufruf einer Funktion erfolgt mit dem Syntax \texttt{function <name>(parameters)}. Eine Funktion kann eine beliebig Menge an Parameter aufweisen. Für jeden Parameter kann jeder beliebige Ausdruck eingesetzt werden, solange der Formal- und Aktualtyp übereinstimmt.
 
 % TODO Std Functions
 
 \section{Variablen}
-\toya erlaubt Nutzer:innen die Erstellung von Variablen in Funktionen und auf globaler Ebene. Der Syntax dafür lautet \texttt{var <name> = <ausdruck>}; die explizite Angabe eines Typs ist nicht möglich. Stattdessen leitet der Compiler anhand bekannter Typinformation des zu evaluierenden Ausdrucks den Typ ab und weist diesen Typ der Variable zu. Dieser Typ bleibt über die gesamte Lebensdauer der Variable gleich. Sobald der Typ einer Variable fixiert ist, so kann er nicht mehr geändert werden. Initialisiert man also eine Variable mithilfe eines Ganzzahl-Ausdrucks, so ist die Variable bis dessen Speicherplatz durch den Garbage Collector freigegeben wird, vom Typ \texttt{int}. Eine getrennte Deklaration und Initialisierung ist nicht möglich.
+\Toya erlaubt Nutzer:innen die Erstellung von Variablen in Funktionen und auf globaler Ebene. Der Syntax dafür lautet \texttt{var <name> = <ausdruck>}; die explizite Angabe eines Typs ist nicht möglich. Stattdessen leitet der Compiler anhand bekannter Typinformation des zu evaluierenden Ausdrucks den Typ ab und weist diesen Typ der Variable zu. Dieser Typ bleibt über die gesamte Lebensdauer der Variable gleich. Sobald der Typ einer Variable fixiert ist, so kann er nicht mehr geändert werden. Initialisiert man also eine Variable mithilfe eines Ganzzahl-Ausdrucks, so ist die Variable bis dessen Speicherplatz durch die automatische Speicherplatzverwaltung freigegeben wird, vom Typ \texttt{int}. Eine getrennte Deklaration und Initialisierung ist nicht möglich.
 
-Abgesehen von typentheoretischer Relevanz bietet die Verwendung des Schlüsselwortes \texttt{var} einige Vorteile aber auch Nachteile für Verwender:innen von \toya. Da \texttt{var} alle anderen Typen ersetzt, erleichtert es die Schreibarbeit für Programmierer:innen ungemein. Robert C. Martin sagt jedoch in seinem nominalen Werk \textcite{martin2009clean} ``Indeed, the ratio of time spent reading vs. writing is well over 10:1. We are constantly reading old code as part of the effort to write new code.''. Daraus folgt, dass die Lesbarkeit wichtiger als Schreibbarkeit von Code ist und hierbei zeigen sich die Schwächen. Mit nur einem Schlüsselwort kann der Typ einer Variablen nicht explizit angegeben werden und muss durch den Leser:in abgeleitet werden, ergo ist die Lesbarkeit von Code, welcher \toya verwendet, schlechter als bei anderen Sprachen. Um diesem Problem vorzubeugen, bieten moderne IDEs Hinweise auf den Typ in der grafischen Benutzeroberfläche. Aufgrund der geringen Anzahl an Typen in \toya ist das Fehlen von Typhinweisen jedoch vernachlässigbar. Vergleicht man nun die Variablendeklaration und Initialisierung mit Java, so ist zu erkennen, dass bei der Initialisierung via Literalen die Verwendung von \texttt{var} kein Problem darstellt. Will man einer Variable den gelieferten Wert einer Funktion zuweisen, so können hier aber Schwierigkeiten hinsichtlich Schlussfolgerungen auftreten. Daher ist die bewusste und intelligente Vergabe von Variablennamen essenziell.
+Abgesehen von typentheoretischer Relevanz bietet die Verwendung des Schlüsselwortes \texttt{var} einige Vorteile aber auch Nachteile für Verwender:innen von \toya. Da \texttt{var} alle anderen Typen ersetzt, erleichtert es die Schreibarbeit für Programmierer:innen ungemein. Robert C. Martin sagt jedoch in seinem nominalen Werk \textcite{martin2009clean} ``Indeed, the ratio of time spent reading vs. writing is well over 10:1. We are constantly reading old code as part of the effort to write new code.''. Daraus folgt, dass die Lesbarkeit wichtiger als Schreibbarkeit von Code ist und hierbei zeigen sich die Schwächen. Mit nur einem Schlüsselwort kann der Typ einer Variablen nicht explizit angegeben werden und muss durch den Leser:in abgeleitet werden. Ergo ist die Lesbarkeit von \toya Code schlechter als bei anderen Sprachen. Um diesem Problem vorzubeugen bieten moderne Entwicklungsumgebungen Hinweise auf den Typ in der grafischen Benutzeroberfläche. Aufgrund der geringen Anzahl an Typen in \toya ist das Fehlen von Typhinweisen jedoch vernachlässigbar.
 
-\begin{ToyaCode}[numbers=none, caption={Variablendeklaration in toya}]
+Vergleicht man nun die Variablendeklaration und Initialisierung von \toya~\ref{lst:intro_varinittoya} mit Java~\ref{lst:intro_varinitjava}, so ist zu erkennen, dass bei der Initialisierung via Literalen die Verwendung von \texttt{var} kein Problem darstellt. Will man einer Variable den gelieferten Wert einer Funktion zuweisen, so können hier aber Schwierigkeiten hinsichtlich Schlussfolgerungen auftreten. Daher ist die bewusste und intelligente Vergabe von Variablennamen essenziell.
+
+\begin{ToyaCode}[numbers=none, caption={Variablendeklaration in toya}, label=lst:intro_varinittoya]
 var number = 123
 var word = "Hello World"
 var value = 123.456
@@ -50,7 +54,7 @@ var bool = true
 var result = someFunction()
 \end{ToyaCode}
 
-\begin{JavaCode}[numbers=none,caption={Variablendeklaration in Java (vor Version 10)}]
+\begin{JavaCode}[numbers=none,caption={Variablendeklaration in Java (vor Version 10)}, label=lst:intro_varinitjava]
 int number = 123;
 String word = "Hello World";
 double value = 123.456;
@@ -62,7 +66,7 @@ Der Name einer Variable darf nur einmal im Gültigkeitsbereich verwendet werden,
 
 \subsection{Felder}
 
-Felder sind eine eindimensionale Folge eines bestimmten Typs mit einer fixen Länge, welche bei der Deklaration des Feldes angegeben wird und sich über die Lebensdauer des Feldes nicht mehr ändert. Zuweisungen und Deklarationen unterscheiden sich nur leicht von nicht-Feld Variablen. Der Hauptunterschied dabei besteht darin, dass die Länge bei der Deklaration und der Index bei der Zuweisung anzugegeben is.
+Ein Feld ist eine eindimensionale Folge eines bestimmten Typs mit einer fixen Länge, welche bei der Deklaration des Feldes angegeben wird und sich über die Lebensdauer des Feldes nicht mehr ändert. Zuweisungen und Deklarationen unterscheiden sich nur leicht von nicht-Feld Variablen. Der Hauptunterschied dabei besteht darin, dass die Länge bei der Deklaration und der Index bei der Zuweisung anzugegeben is.
 
 Felder werden mit der Syntax \texttt{var <name> = new <typ>[int-Ausdruck]} deklariert. Mit \texttt{<name>[int-Ausdruck] = Ausdruck} wird ein neuer Wert auf die Speicheradresse, dies anhand des Index berechnet wird, geschrieben.
 
@@ -72,11 +76,11 @@ Anweisungen sind Befehle, die keinen Wert liefern. Dazu gehören For-Schleifen u
 
 \subsection{For-Schleifen}
 
-For-Schleifen in \toya verhalten sich gleich wie in vielen anderen Sprachen, Java zum Beispiel. Sie bestehen aus einem Schleifenkopf und einem Schleifenkörper. Der Schleifenkopf besteht aus drei Teilen von denen alle drei optional sind:
+For-Schleifen in \toya verhalten sich gleich wie in vielen anderen Sprachen. Sie bestehen aus einem Schleifenkopf und einem Schleifenkörper. Der Schleifenkopf besteht aus drei Teilen von denen alle drei optional sind:
 \begin{itemize}
     \item \textbf{Zählvariable:} Eine Variablendeklaration.
     \item \textbf{Abbruchbedingung:} Ein Ausdruck, der zu einem booleschen Wert evaluieren muss. Solang dessen Wert \texttt{true} ist, läuft die Schleife.  
-    \item \textbf{Inkrement-Ausdruck:} Der Ausdruck, welcher nach jedem Schleifendurchlauf evaluiert wird und typischerweise die Zählvariable verändert wird.
+    \item \textbf{Inkrement-Ausdruck:} Der Ausdruck, welcher nach jedem Schleifendurchlauf evaluiert wird und typischerweise die Zählvariable verändert.
 \end{itemize}
 
 \begin{ToyaCode}[numbers=none, caption={Eine For-Schleife, die die Zählvariable auf die Konsole ausgibt.}]
@@ -85,21 +89,21 @@ for (var i = 0; i <= 10; i++) {
 }
 \end{ToyaCode}
 
-Gibt es keine Abbruchbedingung, so läuft die Schleife, solange das Programm läuft. Wie in Java kann man also mit \texttt{for (;;) \{ ... \}} eine Endlos-Schleife erzeugen.
+Gibt es keine Abbruchbedingung, so läuft die Schleife, solange das Programm läuft. Wie in Java kann die Entwickler:in mit der Anweisung \texttt{for (;;) \{ ... \}} eine Endlos-Schleife erzeugen.
 
 \section{Ausdrücke}
 
-Ausdrücke in \toya sind alle Konstrukte, welche einen Wert liefern. So sind Funktionsaufrufe, die einen Rückgabewert haben, If-Verzweigungen, boolesche und arithmetische Ausdrücke, Literale und Variablen Ausdrücke. Ausdrücke evaluieren immer zu einem Wert, welcher aus dem Wertebereich eines bestimmten Typs entstammt. Abgesehen vom zwingendem Übereinstimmen des Formal- und Aktualtyps existieren keine Beschränkungen, was das Ersetzen von Ausdrücke durch andere Ausdrücke betrifft.
+Alle Konstrukte, die einen Wert liefern, sind Ausdrücke in \toya. So sind Funktionsaufrufe, die einen Rückgabewert haben, If-Verzweigungen, boolesche und arithmetische Ausdrücke, Literale und Variablen Ausdrücke. Ausdrücke evaluieren immer zu einem Wert, welcher aus dem Wertebereich eines bestimmten Typs entstammt. Abgesehen vom zwingendem Übereinstimmen des Formal- und Aktualtyps existieren keine Beschränkungen, was das Ersetzen von Ausdrücke durch andere Ausdrücke betrifft.
 
 \subsection{Arithmetik}
 
-\toya unterstützt Addition (\texttt{+}), Subtraktion (\texttt{-}), Multiplikation (\texttt{*}) und Division (\texttt{/}) für Ganzzahl- und Gleitkomma-Werte via Infix Notation. Bei der Evaluierung von arithmetischen Ausdrücke wird auf die Klammerung und auf die Operatorrangfolge Rücksicht genommen, sodass arithmetische Ausdrücke in der richtigen Reihenfolge evaluiert werden. 
+\Toya unterstützt Addition (\texttt{+}), Subtraktion (\texttt{-}), Multiplikation (\texttt{*}) und Division (\texttt{/}) für Ganzzahl- und Gleitkomma-Werte via Infix Notation. Bei der Evaluierung von arithmetischen Ausdrücken wird auf die Klammerung und auf die Operatorrangfolge Rücksicht genommen, sodass arithmetische Ausdrücke in der richtigen Reihenfolge evaluiert werden. 
 
 % TODO precedence der Operatoren Grafik hier einfügen
 
 \subsection{Boole'sche Logik}
 
-Boole'sche Ausdrücke sind essenziell für die Verwendung von If-Verzweigungen und For-Schleifen, da sie für die Zweig-Wahl, beziehungsweise als Abbruchbedingung benötigt werden. Zur Auswahl stehen die boole'schen Operatoren `Und' (\texttt{\&\&}) und `Oder' (\texttt{||}) und die relationalen Operatoren Größer (\texttt{>}), Größer-Gleich (\texttt{>=}), Gleich (\texttt{==}), Kleiner-Gleich (\texttt{<=}) und Kleiner (\texttt{<}). Außerdem können booleäsche Ausdrücke mit dem Präfix \texttt{!} negiert werden. Es ist zu beachten, dass relationale Operatoren eine höhere Rangigkeit als boole'sche Operatoren haben, sodass selbst ohne richtiger Klammerung der Ausdruck auf die erwartete Weise evaluiert wird. Die Rangfolge der Operatoren hierbei entspricht der von C.
+Boole'sche Ausdrücke sind essenziell für die Verwendung von If-Verzweigungen und For-Schleifen, da sie für die Zweig-Wahl, beziehungsweise als Abbruchbedingung benötigt werden. Zur Auswahl stehen die boole'schen Operatoren \textit{Und} (\texttt{\&\&}) und \textit{Oder} (\texttt{||}) und die relationalen Operatoren Größer (\texttt{>}), Größer-Gleich (\texttt{>=}), Gleich (\texttt{==}), Kleiner-Gleich (\texttt{<=}) und Kleiner (\texttt{<}). Außerdem können booleäsche Ausdrücke mit dem Präfix \texttt{!} negiert werden. Es ist zu beachten, dass relationale Operatoren eine höhere Rangigkeit als boole'sche Operatoren haben, sodass selbst ohne richtiger Klammerung der Ausdruck auf die erwartete Weise evaluiert wird. Die Rangfolge der Operatoren hierbei entspricht der von C.
 
 % TODO Tabelle welche Operation für welchen Typen unterstützt wird.
 
@@ -107,9 +111,9 @@ Boole'sche Ausdrücke sind essenziell für die Verwendung von If-Verzweigungen u
 
 If-Verzweigungen ermöglichen Entwickler:innen, bedingte Ausführung zu implementieren. If-Verzweigungen sind sehr flexibel in ihrer Syntax, da sowohl ein einzelner Ausdruck, als auch ein Block mit mehrere Anweisungen in den Zweigen des Ifs angegeben werden kann. 
 
-\texttt{if (<boolean-expression>) \{ <statement>* \} else \{ <statement>* \}} ermöglicht die Angabe von mehreren Anweisungen pro Block, wobei jeder Block von geschwungenen Klammern umgeben ist. Hat man die Absicht, nur einen Ausdruck pro Zweig anzugeben, dann reicht \texttt{if (<boolean-ausdruck>) expression else expression} völlig aus.
+\texttt{if (<boolean-expression>) \{ <statement>* \} else \{ <statement>* \}} ermöglicht die Angabe von mehreren Anweisungen pro Block, wobei jeder Block von geschwungenen Klammern umgeben ist, wie in~\autoref{lst:intro_ifexpanded} zu sehen ist. Hat man die Absicht, nur einen Ausdruck pro Zweig anzugeben, dann reicht \texttt{if (<boolean-ausdruck>) expression else expression} völlig aus. Siehe~\autoref{lst:intro_ifexpression} dazu.
 
-\begin{ToyaCode}[numbers=none, caption={If-Verzweigung als klassische Anweisung.}]
+\begin{ToyaCode}[numbers=none, caption={If-Verzweigung als klassische Anweisung.}, label=lst:intro_ifexpanded]
 var someBoolean = true
 if (someBoolean) {
     doSomething()
@@ -119,18 +123,18 @@ if (someBoolean) {
 }
 \end{ToyaCode}
 
-\begin{ToyaCode}[numbers=none, caption={If-Verzweigung als Ausdruck in einer Variablenzuweisung.}]
+\begin{ToyaCode}[numbers=none, caption={If-Verzweigung als Ausdruck in einer Variablenzuweisung.}, label=lst:intro_ifexpression]
 var someBoolean = false
 var someInteger = if (someBoolean) 4 else 5
 \end{ToyaCode}
 
-Die Stärke der If-Verzweigung in toya liegt darin, dass es nicht nur ein Anweisung ist, sondern auch die Verwendung als Ausdruck möglich ist. Dadurch kann eine If-Verzweigung auf der rechten Seite einer Variablenzuweisung, in arithmetischen Ausdrücken, als Bedingung in anderen If-Verzweigungen, etc. vorkommen. Andere Programmiersprachen, wie Java, bieten einen ternären Operator \texttt{var x = boolean-expression ? expression : expression}. Dieser existiert in \toya jedoch nicht, da die If-Verzweigung bereits diesen Zweck erfüllt. 
+Die Stärke der If-Verzweigung in \toya liegt darin, dass es nicht nur ein Anweisung ist, sondern auch die Verwendung als Ausdruck möglich ist. Dadurch kann eine If-Verzweigung auf der rechten Seite einer Variablenzuweisung, in arithmetischen Ausdrücken, als Bedingung in anderen If-Verzweigungen, etc. vorkommen. Andere Programmiersprachen, wie Java, bieten einen ternären Operator \texttt{var x = boolean-expression ? expression : expression}. Dieser existiert in \toya jedoch nicht, da die If-Verzweigung bereits diesen Zweck erfüllt. 
 
 % TODO: Hinweis auf Kotlin
 % https://discuss.kotlinlang.org/t/ternary-operator/2116/10
 % short answer: https://discuss.kotlinlang.org/t/ternary-operator/2116/171
 
-Um die Verwendung als Ausdruck zu ermöglichen, ist zu beachten, dass bei If-Verzweigungen mit Blöcken die letzte Anweisung ein Ausdruck sein muss; bei If-Verzweigungen mit Ausdrücken besteht jeder Zweig sowieso nur aus einem Ausdruck, dadurch ist diese Bedingung sowieso gegeben. Außerdem müssen die Typen in allen Zweigen übereinstimmen und der sonst optionale else-Zweig zwingend vorhanden sein. Wäre der else-Zweig nämlich nicht vorhanden, dann wäre unter Umständen kein Wert als Folge der Evaluierung gegeben.
+Um die Verwendung als Ausdruck zu ermöglichen, ist zu beachten, dass bei If-Verzweigungen mit Blöcken die letzte Anweisung ein Ausdruck sein muss. Handelt es sich um eine If-Verzweigungen mit Ausdrücken besteht jeder Zweig aus nur einem einzelnen Ausdruck. Dadurch ist diese Bedingung sowieso gegeben. Außerdem müssen die Typen in allen Zweigen übereinstimmen und der sonst optionale else-Zweig zwingend vorhanden sein. Wäre der else-Zweig nicht vorhanden, dann wäre unter Umständen kein Wert als Folge der Evaluierung gegeben.
 
 \subsection{Literale}
 
@@ -139,7 +143,7 @@ Literale sind die primitivsten Ausdrücke in \toya und stellen fixe Werte dar. J
 \begin{itemize}
     \item \textbf{int:} Alle numerischen Werte ohne Nachkommastellen. (z.B.: \texttt{12345})
     \item \textbf{double:} Alle numerischen Werte mit Nachkommastellen. (z.B.: \texttt{123.45})
-    \item \textbf{string:} Alle Zeichenketten, die von doppelten Anführungszeichen umgeben sind. (z.B.: \texttt{``Hello World''})
+    \item \textbf{string:} Zeichenketten, die von doppelten Anführungszeichen umgeben sind. (z.B.: \texttt{``Hello World''})
     \item \textbf{boolean:} \texttt{true} und \texttt{false}. 
 \end{itemize}
 

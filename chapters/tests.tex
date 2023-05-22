@@ -4,7 +4,7 @@
 Um die Funktionalität von \toya zu gewährleisten, sind Tests zu vollziehen. Diese Tests verlaufen in drei Schritte, wie folgt:
 \begin{enumerate}
     \item Programmcode in \toya schreiben
-    \item den kompilierten Bytecode analysieren
+    \item Den kompilierten Bytecode analysieren
     \item Die Ausgabe des Programms überprüfen
 \end{enumerate}
 
@@ -14,13 +14,15 @@ Insgesamt gilt es, die einzelnen Sprachkonstrukte, wie zum Beispiel For-Schleife
 
 \section{Hello World}
 
-\begin{ToyaCode}[numbers=none, caption={Quelltext des Hello World Programms}]
+Der erste Test stellt ein \textit{Hello World} Programm dar \ref{lst:test_1_source}. Der Bytecode dieses Programms beschränkt sich auf einige wenige Befehle \ref{lst:test_1_bytecode}. Konkret laden \texttt{getstatic} und \texttt{ldc} Referenzen zum \texttt{System.out} Objekt und der auszugebenden Zeichenkette. Anschließend ruft \texttt{invokevirtual} die \texttt{println} Funktion mit der Zeichenkette auf. Als Resultat gibt dieser Test die Zeichenkette \textit{Hello World} auf der Konsole aus \ref{lst:test_1_output}.
+
+\begin{ToyaCode}[numbers=none, caption={Quelltext des Hello World Programms},label=lst:test_1_source]
 function main(args: string[]) {
     print("Hello World")
 }
 \end{ToyaCode}
 
-\begin{JavaCode}[numbers=none, caption={Bytecode des Hello World Programms}]
+\begin{JavaCode}[numbers=none, caption={Bytecode des Hello World Programms},label=lst:test_1_bytecode]
 public class Main {
     public static void main(java.lang.String[]);
         Code:
@@ -31,13 +33,17 @@ public class Main {
 }
 \end{JavaCode}
 
-\begin{ToyaCode}[numbers=none, caption={Konsolen-Ausgabe des Hello World Programms}]
+\begin{ToyaCode}[numbers=none, caption={Konsolen-Ausgabe des Hello World Programms},label=lst:test_1_output]
 Hello World    
 \end{ToyaCode}
 
 \section{Funktionen}
 
-\begin{ToyaCode}[numbers=none, caption={Funktionen}]
+Der zweite Test beschäftigt sich mit der Verwendung von Funktionen und dem Arbeiten mit Funktionsergebnissen. \autoref{lst:test_2_source} zeigt den Quelltext des Programms. Als erstes ruft dieser Test die \texttt{title} Funktion auf. Diese Funktion gibt die Zeichenkette \textit{This is an addition:} auf der Konsole aus. Anschließend ruft das Programm die \texttt{print} Funktion mit dem Ergebnis der \texttt{add} Funktion auf. Die \texttt{add} Funktion addiert in diesem Fall die ganzzahligen Wertliterale \texttt{1} und \texttt{2}. Dementsprechend gibt die \texttt{print} Funktion den Wert \texttt{3} auf der Konsole aus, wie in \autoref{lst:test_2_output} zu sehen ist.
+
+Der erste Test behandelt die Ausgabe via der \texttt{print} Funktion, daher wird nicht näher darauf eingegangen. Die \texttt{add} Funktion lädt mit den Opcodes \texttt{iload\_0} und \texttt{iload\_1} die beiden ganzzahligen Parameter der Funktion. \texttt{iadd} addiert anschließend die beiden Werte und liefert diese mit \texttt{ireturn} zurück. Der vollständige Bytecode für die drei Funktionen ist in~\autoref{lst:test_2_bytecode} zu sehen.
+
+\begin{ToyaCode}[numbers=none, caption={Funktionen},label=lst:test_2_source]
 function title() {
     print("This is an addition:")
 }
@@ -52,7 +58,7 @@ function main(args: string[]) {
 }
 \end{ToyaCode}  
 
-\begin{JavaCode}[numbers=none, caption={Bytecode für Funktionen}]
+\begin{JavaCode}[numbers=none, caption={Bytecode für Funktionen},label=lst:test_2_bytecode]
 public class Main {
     public static void title();
         Code:
@@ -80,15 +86,18 @@ public class Main {
 }    
 \end{JavaCode}
 
-\begin{ToyaCode}[numbers=none, caption={Konsolen-Ausgabe der Funktionen}]
+\begin{ToyaCode}[numbers=none, caption={Konsolen-Ausgabe der Funktionen},label=lst:test_2_output]
 This is an addition:
 3  
 \end{ToyaCode}
 
-
 \section{Variablen}
 
-\begin{ToyaCode}[numbers=none, caption={Variablen}]
+Der dritte Test behandelt die Deklaration und Initialisierung von Variablen. Als erstes wird eine Variable pro Typ mit Wertliteralen und eine weitere Variable mit einem Funktionsergebnis angelegt, wie in~\autoref{lst:test_3_source} zu sehen ist. Anschließend wird jeder Wert auf der Konsole ausgegeben, siehe dazu \autoref{lst:test_3_output}.
+
+Die beiden Opcodes \texttt{<type>load} und \texttt{<type>store} laden und speichern respektive den Wert einer lokalen Variable. Der Bytecode ist unter~\autoref{lst:test_3_bytecode} zu sehen.
+
+\begin{ToyaCode}[numbers=none, caption={Variablen},label=lst:test_3_source]
 function someFunction() -> int {
     return 8
 }
@@ -108,7 +117,7 @@ function main(args: string[]) {
 }
 \end{ToyaCode}
 
-\begin{JavaCode}[numbers=none, caption={Bytecode von Variablen}]
+\begin{JavaCode}[numbers=none, caption={Bytecode von Variablen},label=lst:test_3_bytecode]
 public class Main {
     public static int someFunction();
         Code:
@@ -146,7 +155,7 @@ public class Main {
 }      
 \end{JavaCode}
 
-\begin{ToyaCode}[numbers=none, caption={Konsolen-Ausgabe der Variablen}]
+\begin{ToyaCode}[numbers=none, caption={Konsolen-Ausgabe der Variablen},label=lst:test_3_output]
 123
 Hello World
 123.456
@@ -156,7 +165,11 @@ true
 
 \section{Felder}
 
-\begin{ToyaCode}[numbers=none, caption={Felder}]
+Der vierte Test behandelt die Deklaration, Initialisierung und den Zugriff auf Felder. Der Quelltext ist in~\autoref{lst:test_4_source} zu sehen. Das Programm legt an erster Stelle ein acht Elemente großes Feld vom Typ \texttt{int} an. Dem Index \texttt{3} wird das Wertliteral \texttt{15} zugewiesen. Anschließend gibt das Programm die Indizes \texttt{3} und \texttt{4} auf der Konsole aus. Wie erwartet liegt in \texttt{arr[3]} der Wert \texttt{15} und in \texttt{arr[4]} der Wert \texttt{0}, wie an der Konsolenausgabe in~\autoref{lst:test_4_output} zu sehen ist. Primitive Werte haben in Java immer einen Standardwert, was bei Ganzzahlen \texttt{0} ist. Obwohl \texttt{arr[4]} kein Wert zugewiesen wurde, ist daher trotzdem \texttt{0} auf der Konsole zu sehen.
+
+Der Opcode \texttt{newarray} legt ein neues Feld an. Mit den Opcodes \texttt{iaload} und \texttt{iastore} ist der Zugriff auf Elemente des Feldes möglich. Der Bytecode ist in~\autoref{lst:test_4_bytecode} zu sehen.
+
+\begin{ToyaCode}[numbers=none, caption={Felder},label=lst:test_4_source]
 function main(args: string[]) {
     var arr = new int[8]
     arr[3] = 15
@@ -166,50 +179,41 @@ function main(args: string[]) {
 }
 \end{ToyaCode}
 
-\begin{JavaCode}[numbers=none, caption={Bytecode von Felder}]
+\begin{JavaCode}[numbers=none, caption={Bytecode von Felder},label=lst:test_4_bytecode]
 public class Main {
     public static void main(java.lang.String[]);
         Code:
-             0: ldc           #7    // int 3
-             2: ldc           #8    // int 4
-             4: if_icmpgt     11
-             7: iconst_0
-             8: goto          12
-            11: iconst_1
-            12: ifne          20
-            15: ldc           #9    // int 6
-            17: goto          22
-            20: ldc           #10   // int 5
-            22: istore_1
-            23: getstatic     #16   // Field java/lang/System.out:Ljava/io/PrintStream;
-            26: iload_1
-            27: invokevirtual #22   // Method java/io/PrintStream.println:(I)V
-            30: ldc           #7    // int 3
-            32: ldc           #8    // int 4
-            34: if_icmplt     41
-            37: iconst_0
-            38: goto          42
-            41: iconst_1
-            42: ifne          56
-            45: getstatic     #16   // Field java/lang/System.out:Ljava/io/PrintStream;
-            48: ldc           #24   // String false branch
-            50: invokevirtual #27   // Method java/io/PrintStream.println:(Ljava/lang/String;)V
-            53: goto          64
-            56: getstatic     #16   // Field java/lang/System.out:Ljava/io/PrintStream;
-            59: ldc           #29   // String true branch
-            61: invokevirtual #27   // Method java/io/PrintStream.println:(Ljava/lang/String;)V
-            64: return
-}       
+             0: ldc           #7    // int 8
+             2: newarray       int
+             4: astore_1
+             5: aload_1
+             6: ldc           #8    // int 3
+             8: ldc           #9    // int 15
+            10: iastore
+            11: getstatic     #15   // Field java/lang/System.out:Ljava/io/PrintStream;
+            14: aload_1
+            15: ldc           #8    // int 3
+            17: iaload
+            18: invokevirtual #21   // Method java/io/PrintStream.println:(I)V
+            21: getstatic     #15   // Field java/lang/System.out:Ljava/io/PrintStream;
+            24: aload_1
+            25: ldc           #22   // int 4
+            27: iaload
+            28: invokevirtual #21   // Method java/io/PrintStream.println:(I)V
+            31: return
+}           
 \end{JavaCode}
 
-\begin{ToyaCode}[numbers=none, caption={Konsolen-Ausgabe der Felder}]
+\begin{ToyaCode}[numbers=none, caption={Konsolen-Ausgabe der Felder},label=lst:test_4_output]
 15
 0    
 \end{ToyaCode}
 
 \section{If-Verzweigungen}
 
-\begin{ToyaCode}[numbers=none, caption={If-Verzweigungen}]
+Der vierte Test behandelt die Verwendung von If-Verzweigungen als Ausdruck und Anweisung. Der erste Teil des Quelltextes verwendet die If-Verzweigung als Ausdruck um einer Variable einen Wert zuzuweisen und diese auszugeben. Der zweite Teil verwendet die If-Verzweigung als Anweisung um einen Wert auf der Konsole auszugeben. Der Quelltext ist in~\autoref{lst:test_5_source} zu sehen.
+
+\begin{ToyaCode}[numbers=none, caption={If-Verzweigungen},label=lst:test_5_source]
 function main(args: string[]) {
     var value = if (3 > 4) 5 else 6
     print(value)
@@ -222,7 +226,7 @@ function main(args: string[]) {
 }
 \end{ToyaCode}
 
-\begin{JavaCode}[numbers=none, caption={Byteocde der If-Verzweigungen}]
+\begin{JavaCode}[numbers=none, caption={Bytecode der If-Verzweigungen},label=lst:test_5_bytecode]
 public class Main {
     public static void main(java.lang.String[]);
         Code:
@@ -258,7 +262,7 @@ public class Main {
 }
 \end{JavaCode}
 
-\begin{ToyaCode}[numbers=none, caption={Konsolen-Ausgabe der If-Verzweigungen}]
+\begin{ToyaCode}[numbers=none, caption={Konsolen-Ausgabe der If-Verzweigungen},label=lst:test_5_output]
 6
 true branch    
 \end{ToyaCode}
@@ -328,7 +332,7 @@ i is 20:
 \end{ToyaCode}
 
 \section{Umfangreicheres Beispiel}
-Die Tests bisher beschränkten sich auf einzelne Eigenschaften von \toya. Um aber auch das Zwischenspiel von mehreren Eigenschaften zu testen, wird nun noch ein umfangreicheres Programm analysiert. Dieses Programm ruft eine Funktion auf, welche Zeichenketten auf der Konsole ausgibt, definiert Variablen von Felder und primitiven Datentypen, iteriert über eine For-Schleife, welche eine If-Verzweigung enthält und verändert und liest Felder.
+Die Tests bisher beschränkten sich auf einzelne Eigenschaften von \toya. Um aber auch das Zusammenspiel von mehreren Eigenschaften zu testen, wird nun noch ein umfangreicheres Programm analysiert. Dieses Programm ruft eine Funktion auf, welche Zeichenketten auf der Konsole ausgibt, definiert Variablen von Felder und primitiven Datentypen, iteriert über eine For-Schleife, welche eine If-Verzweigung enthält und verändert und liest Felder.
 
 \begin{ToyaCode}[numbers=none, caption={Quelltext des umfangereicheren Beispiels}]
 function printIntro(n: int) {

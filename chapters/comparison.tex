@@ -17,15 +17,15 @@ Hinsichtlich der funktionalen Programmierung bietet Kotlin eine leicht verwendba
 
 \section{Funktionen}
 
-Kotlin verwendet das Schlüsselwort \texttt{fun} zur Funktionsdefinition. Der Programmeinstieg geschieht über eine eindeutig identifizierbare \texttt{main}-Funktion, welche man optional mit einem \texttt{args: String[]} Parameter versehen kann. Entscheidet die Benutzer:in sich dazu, die \texttt{main}-Funktion parameterlos zu implementieren, erstellt der Compiler intern eine zweite \texttt{main}-Funktion mit \texttt{args: String[]} Parameter, welche dazu dient, die, von der Nutzer:in definierte \texttt{main}-Funktion aufzurufen.
+Kotlin verwendet das Schlüsselwort \texttt{fun} zur Funktionsdefinition. Der Programmeinstieg geschieht über eine eindeutig identifizierbare \texttt{main}-Funktion, welche man optional mit einem \texttt{args: String[]} Parameter versehen kann. Entscheidet die Benutzer:in sich dazu, die \texttt{main}-Funktion parameterlos zu implementieren, erstellt der Compiler intern eine zweite \texttt{main}-Funktion mit \texttt{args: String[]} Parameter, welche dazu dient, die, von der Nutzer:in definierte \texttt{main}-Funktion aufzurufen. Wie in~\autoref{lst:cmp_kotlinfunction} und~\autoref{lst:cmp_toyafunction} zu sehen ist, ähneln sich \toya und Kotlin, abgesehen von kleinen syntaktischen Unterschieden.
 
-\begin{KotlinCode}[numbers=none, caption={Funktion unter Kotlin}]
+\begin{KotlinCode}[numbers=none, caption={Funktion unter Kotlin}, label=lst:cmp_kotlinfunction]
 fun add(lhs: Int, rhs: Int) : Int {
     return lhs + rhs
 }
 \end{KotlinCode}
 
-\begin{ToyaCode}[numbers=none, caption={Funktion unter toya}]
+\begin{ToyaCode}[numbers=none, caption={Funktion unter \toya}, label=lst:cmp_toyafunction]
 function add(lhs: int, rhs: int) -> int {
     return lhs + rhs
 }
@@ -33,11 +33,11 @@ function add(lhs: int, rhs: int) -> int {
 
 \section{Variablen}
 
-In Kotlin stehen zur Deklaration von Variablen die Schlüsselwörter \texttt{var} (Wert ist veränderbar) und \texttt{val} (Wert ist unveränderbar) zur Verfügung. Die Bestimmung des Typs erfolgt entweder implizit anhand des zugewiesenen Ausdrucks oder explizit.\\ \texttt{val someString: String = ``Hello World''} weißt zum Beispiel der Variable \textit{someString} den Wert \textit{Hello World} zu. Die explizite Angabe des Typs \texttt{String} ist bei diesem Beispiel redundant, da aus dem Ausdruck der Typ ableitbar ist und daher nicht zwingend notwendig.
+In Kotlin stehen zur Deklaration von Variablen die Schlüsselwörter \texttt{var} (Wert ist veränderbar) und \texttt{val} (Wert ist unveränderbar) zur Verfügung. Die Bestimmung des Typs erfolgt entweder implizit anhand des zugewiesenen Ausdrucks oder explizit.\\ \texttt{val someString: String = ``Hello World''} weist zum Beispiel der Variable \textit{someString} den Wert \textit{Hello World} zu. Die explizite Angabe des Typs \texttt{String} ist bei diesem Beispiel redundant, da aus dem Ausdruck der Typ ableitbar ist und daher nicht zwingend notwendig.~\autoref{lst:cmp_kotlinvariables} zeigt die Initialisierung von drei Variablen mit expliziter und zwei weitere Variablen mit impliziter Typangabe in Kotlin.
 
-Im Gegensatz dazu bietet \toya zur Variablendeklaration nur das Schlüsselwort \texttt{var} an, da in \toya alle Variablen veränderbar sind. Die explizite Angabe von Typen ist nicht möglich. Der Typ leitet sich immer vom Ausdruck ab.
+Im Gegensatz dazu bietet \toya zur Variablendeklaration nur das Schlüsselwort \texttt{var} an, da in \toya alle Variablen veränderbar sind. Die explizite Angabe von Typen ist nicht möglich. Der Typ leitet sich immer vom Ausdruck ab.~\autoref{lst:cmp_toyavariables} zeigt die Initialisierung der selben Variablen und Werten wie in~\autoref{lst:cmp_kotlinvariables} mit dem Unterschied, dass diese in nun in \toya implementiert sind.
 
-\begin{KotlinCode}[numbers=none, caption={Variablendeklarationen in Kotlin}]
+\begin{KotlinCode}[numbers=none, caption={Variablendeklarationen in Kotlin}, label=lst:cmp_kotlinvariables]
 val number: Int = 123
 val word: String = "Hello World"
 var value: Double = 123.456
@@ -45,7 +45,7 @@ var bool = true
 var result = someFunction()
 \end{KotlinCode}
 
-\begin{ToyaCode}[numbers=none, caption={Variablendeklarationen in \toya}]
+\begin{ToyaCode}[numbers=none, caption={Variablendeklarationen in \toya}, label=lst:cmp_toyavariables]
 var number = 123
 var word = "Hello World"
 var value = 123.456
@@ -55,38 +55,38 @@ var result = someFunction()
 
 \section{Felder}
 
-Kotlin bietet für die Verwendung von Felder die generische Klasse \texttt{Array} an. Da Felder, wie in anderen Sprachen, auch in Kotlin statisch in ihrer Größe sind, ist die Anzahl an speicherbaren Elementen als Konstruktorparameter anzugeben. Alternativ dazu besteht die Möglichkeit, mithilfe der Hilfs-Funktion \texttt{arrayOf(...)} ein Feld mit Werten zu initialisieren. Für primitive Typen existieren Klassen, \toya hingegen beruft sich auf den C-artigen Syntax und verwendet Ausdrücke in der Form von \texttt{new <type>[int-expression]} zur Initialisierung von Felder. Die Größe ist ebenso statisch und als Ausdruck innerhalb der eckigen Klammern anzugeben.
+Kotlin bietet für die Verwendung von Felder die generische Klasse \texttt{Array} an. Da Felder, wie in anderen Sprachen, auch in Kotlin statisch in ihrer Größe sind, ist die Anzahl an speicherbaren Elementen als Konstruktorparameter anzugeben. Alternativ dazu besteht die Möglichkeit, mit der Hilfs-Funktion \texttt{arrayOf(...)} ein Feld mit Werten zu initialisieren, wie in~\autoref{lst:cmp_kotlinarrays} zu sehen ist. Für primitive Typen existieren Klassen, \toya hingegen beruft sich auf den C-artigen Syntax und verwendet Ausdrücke in der Form von \texttt{new <type>[int-expression]} zur Initialisierung von Felder. Die Größe des Feldes ist statisch und als Ausdruck innerhalb der eckigen Klammern anzugeben. Das Initialisieren eines Feldes und Zuweisen auf einen Index des Feldes ist in~\autoref{lst:cmp_toyaarrays} zu sehen.
 
-\begin{KotlinCode}[numbers=none, caption={Felder in Kotlin}]
+\begin{KotlinCode}[numbers=none, caption={Felder in Kotlin}, label=lst:cmp_kotlinarrays]
 var arrayViaClass = IntArray(5)
 var arrayWithValues = arrayOf(1,2,3,4,5)
 arrayViaClass[2] = 5
 \end{KotlinCode}
 
-\begin{ToyaCode}[numbers=none, caption={Felder in \toya}]
+\begin{ToyaCode}[numbers=none, caption={Felder in \toya}, label=lst:cmp_toyaarrays]
 var array = new int[5]
 arra[2] = 5
 \end{ToyaCode}
 
 \section{If-Verzweigung}
 
-Die Semantik und Syntax von If-Verzweigungungen in \toya gleichen denen in Kotlin. So kann die Benutzer:in sowohl einen einzelnen Ausdruck als auch einen gesamten Programmblock als Zweig angeben. Ebenso ersetzt die normale If-Verzweigung den ternären Operator, wenn alle Zweige einen Ausdruck darstellen. Dies ist ein weiteres Mittel von Kotlin, die Lesbarkeit des Codes zu verbessern. 
+Die Semantik und Syntax von If-Verzweigungungen in \toya gleichen denen in Kotlin. So kann die Benutzer:in sowohl einen einzelnen Ausdruck als auch einen gesamten Programmblock als Zweig angeben. Ebenso ersetzt die normale If-Verzweigung den ternären Operator, wenn alle Zweige einen Ausdruck darstellen. Dies ist ein weiteres Mittel von Kotlin, um die Lesbarkeit des Codes zu verbessern.~\autoref{lst:cmp_if} zeigt eine If-Verzweigung, die garantiert einen Wert zurückliefert und dementsprechend dem ternären Operator gleichzusetzen ist.
 
-\begin{KotlinCode}[numbers=none, caption={If-Ausdruck, der sowohl in Kotlin, als auch in \toya übersetzt}]
+\begin{KotlinCode}[numbers=none, caption={If-Ausdruck, der sowohl in Kotlin, als auch in \toya übersetzt}, label=lst:cmp_if]
 var number = if(3 > 4) 5 else 6
 \end{KotlinCode}
 
 \section{For-Schleifen}
 
-Während \toya For-Schleifen im Stil von Java anbietet, hat Kotlin eine deutlich kompaktere, aber auch flexiblere Syntax um über eine Menge zu iterieren. So hat die Benutzer:in die Möglichkeit entweder über einen \texttt{int}-Bereich oder auch über eine Enumeration zu iterieren. Ein wesentlicher Unterschied zu Java hinsichtlich For-Schleifen ist die Abwesenheit des Inkrement Operators in \toya. Stattdessen muss die Inkrementierung mithilfe des Zuweisungs- und Additions-Operator erfolgen, zum Beispiel: \texttt{i = i+1}.
+Während \toya For-Schleifen ähnlich dem Stil von Java anbietet, wie in~\autoref{lst:cmp_kotlinfor} zu sehen ist, hat Kotlin eine deutlich kompaktere und auch flexiblere Syntax um über eine Menge zu iterieren. So hat die Benutzer:in die Möglichkeit entweder über einen \texttt{int}-Bereich oder auch über eine Enumeration zu iterieren. Ein wesentlicher Unterschied zu Java hinsichtlich For-Schleifen ist die Abwesenheit des Inkrement Operators in \toya. Stattdessen muss die Inkrementierung mithilfe des Zuweisungs- und Additions-Operator erfolgen, zum Beispiel: \texttt{i = i+1}. Die For-Schleifen in~\autoref{lst:cmp_kotlinfor} und~\autoref{lst:cmp_toyafor} zeigen die Iteration über den selben Wertbereich mit einer Sprunggröße von 2.
 
-\begin{KotlinCode}[numbers=none, caption={Einfache For-Schleife in Kotlin}]
+\begin{KotlinCode}[numbers=none, caption={Einfache For-Schleife in Kotlin}, label=lst:cmp_kotlinfor]
 for (i in 0..10 step 2) {
     println(i)
 }
 \end{KotlinCode}
 
-\begin{ToyaCode}[numbers=none, caption={Einfache For-Schleife in toya}]
+\begin{ToyaCode}[numbers=none, caption={Einfache For-Schleife in toya}, label=lst:cmp_toyafor]
 for (var i = 0; i <= 10; i = i+2) {
     print(i)
 }

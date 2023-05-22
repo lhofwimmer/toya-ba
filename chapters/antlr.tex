@@ -1,23 +1,21 @@
 \chapter{Generierung des Syntaxbaums}
 \label{cha:antlr}
 
-ANTLR (\textbf{AN}other \textbf{T}ool for \textbf{L}anguage \textbf{R}ecognition) ist ein seit 1989 entwickeltes Werkzeug von Terrence Parr zum Erzeugen von Parsern, Lexern und Compilern. Die Benutzer:in definiert diese mit einer Grammatik und erzeugt daraus dann mithilfe eines von ANTLR zur Verfügung gestelltem Kommandozeilen-Werkzeug Parser und Lexer in der gewünschten Ziel-Sprache. ANTLR unterstützt unter anderem Java, C\#, Python, JavaScript, Go, C++, Swift, PHP und Dart \parencite{antlrtargets}. \toya bietet als aktuellste Version 4 an, welche große Unterschiede - allen voran der Umstieg auf eine effizientere Parsing-Methodik - zu Version 3 bietet. Der Artikel \textcite{antlrMegaTutorial} dient als Grundlage für dieses Kapitel.
+ANTLR (\textbf{AN}other \textbf{T}ool for \textbf{L}anguage \textbf{R}ecognition) ist ein seit 1989 entwickeltes Werkzeug von Terrence Parr zum Erzeugen von Parsern, Lexern und Compilern. Die Benutzer:in definiert diese mit einer Grammatik und erzeugt daraus dann mithilfe eines von ANTLR zur Verfügung gestelltem Kommandozeilen-Werkzeug Parser und Lexer in der gewünschten Ziel-Sprache. ANTLR unterstützt unter anderem Java, C\#, Python, JavaScript, Go, C++, Swift, PHP und Dart \parencite{antlrtargets}. ANTLR bietet als aktuellste Version 4 an, welche große Unterschiede - allen voran der Umstieg auf eine effizientere Parsing-Methodik - zu Version 3 bietet. Der Artikel \textcite{antlrMegaTutorial} dient als Grundlage für dieses Kapitel.
 
 ANTLR findet auch im professionellen Umfeld Verwendung. So verwendet Twitter ANTLR zur Syntax-Analyse von über 2 Milliarden Suchanfragen pro Tag \parencite{antlrWebsite}. Hadoop verwendet ANTLR zur Syntax-Analyse von \textit{Hive} und \textit{Pig} und Netbeans analysiert den Syntax von \textit{C++} mithilfe ANTLR \parencite{antlrabout}.
 
-Adaptive LL(*) Parsing stellt den größten Unterschied zwischen Version drei und vier von ANTLR dar. ALL(*) ist ein neuer von Terrence Parr entwickelter Parsing-Ansatz, welcher theoretisch zwar eine Laufzeitkomplexität von $\mathcal{O}(n^4)$ hat, praktisch gesehen aber lineare Performanz aufweist. Im Gegensatz zum traditionellen LL- oder LR-Parsing, das auf einer vordefinierten Grammatik basiert, analysiert ALL(*) die gesamte Eingabe, um das Parsing-Entscheidungsdiagramm zu konstruieren, das zur Analyse der PEG verwendet wird. ALL(*) verwendet eine Technik namens adaptive Vorwärtsanalyse, um den automatisch erzeugten Parsing-Entscheidungsbaum zu verbessern. Diese Technik kombiniert Vorwärts- und Rückwärtsanalyse, um die Vorhersage der nächsten Token zu verbessern \parencite{parr2014adaptive}.
+Adaptive LL(*) Parsing stellt den größten Unterschied zwischen Version drei und vier von ANTLR dar. ALL(*) ist ein neuer von Terrence Parr entwickelter Parsing-Ansatz, welcher theoretisch zwar eine Laufzeitkomplexität von $\mathcal{O}(n^4)$ hat, praktisch gesehen aber lineare Performanz aufweist. Im Gegensatz zum traditionellen LL- oder LR-Parsing, das auf einer vordefinierten Grammatik basiert, analysiert ALL(*) die gesamte Eingabe, um das Parsing-Entscheidungsdiagramm zu konstruieren, das die Analyse verwendet. ALL(*) verwendet eine Technik namens adaptive Vorwärtsanalyse, um den automatisch erzeugten Parsing-Entscheidungsbaum zu verbessern. Diese Technik kombiniert Vorwärts- und Rückwärtsanalyse, um die Vorhersage der nächsten \textit{Token} zu verbessern \parencite{parr2014adaptive}.
 
 Der große Vorteil von ANTLR gegenüber selbst entwickelten Lösungen zum Erzugen von Syntaxbäumen ist die Effizienz mit welcher neue Grammatikregeln definiert werden können. Diese Effizienz und Leichtigkeit in der Umsetzung hat jedoch auch seine Kosten. Da ANTLR einen umfangreichen Syntaxbaum erzeugt und es sehr unwahrscheinlich ist, dass das Programm alle Daten des Syntaxbaums benötigt, kommt es zu einem Mehraufwand für Daten, die keinen Nutzen finden.
 
 Deswegen verwenden alle größeren Programmiersprachen (C++, Python, C\#, Java, etc.) selbst entwickelte Lexer und Parser um eine substantielle Reduktion der Übersetzungszeiten zu erreichen.
 
-Da \toya über eine experimentelle Programmiersprache nicht hinaus geht und es den programmatischen Aufwand sprengt, wurde aktiv gegen eine maßgeschneiderte Lösung für \toya entschieden. Die Übersetzungszeiten unter Verwendung von ANTLR sind im Rahmen von \toya akzeptabel. Lexer und Parser, die durch ANTLR erzeugt werden sind nicht schnell, aber schnell genug.
-
-Nun stellt sich die Frage: Wieso nicht auf reguläre Ausdrücke zurückgreifen? Dafür existieren mehrere Gründe:
+Da \toya über eine experimentelle Programmiersprache nicht hinaus geht und es den programmatischen Aufwand übersteigt, wurde aktiv gegen eine maßgeschneiderte Lösung für \toya entschieden. Die Übersetzungszeiten unter Verwendung von ANTLR sind im Rahmen von \toya akzeptabel. Für die Implementierung der Analyse durch reguläre Ausdrücke sprechen mehrere Gründe:
 \begin{itemize}
     \item Kein rekursives Parsing möglich.
-    \item Programmelemente, die an allen Stellen im Code - Kommentare zum Beispiel - auftauchen können, sind an allen potenziellen Stellen im Regex-Ausdruck zu berücksichtigen. Dies führt zu Redundanz.
-    \item Reguläre Ausdrücke wachsen schnell und sind schwer zu verwalten. Da Programmmiersprache typischerweise auch in ihrem Funktionsumfang wachsen, sind reguläre Ausdrücke nicht dafür geeignet und führen zu einer schlechten Skalierbarkeit.
+    \item Programmelemente, die an allen Stellen im Code (Kommentare zum Beispiel) auftauchen können, sind an allen potenziellen Stellen im Regex-Ausdruck zu berücksichtigen. Dies führt zu Redundanz.
+    \item Reguläre Ausdrücke wachsen schnell und sind schwer zu verwalten. Da Programmmiersprachen typischerweise auch in ihrem Funktionsumfang wachsen, sind reguläre Ausdrücke nicht dafür geeignet und führen zu einer schlechten Skalierbarkeit.
 \end{itemize}
 
 % Welche Sprachen unterstützt https://github.com/antlr/antlr4/blob/master/doc/targets.md
@@ -30,9 +28,9 @@ Die Grammatik-Definition in einer \texttt{g4}-Datei ist der Ausgangspunkt für a
 Da Leerzeichen in der Regel unwichtig sind und und keine Relevanz für die Semantik der Sprachen haben (abgesehen von Ausnahmefällen wie Python), ignoriert man diese. Dies erfolgt mithilfe der Anweisung \texttt{\string[ \textbackslash t\textbackslash n\textbackslash r\string]+ -> skip}, welche angibt, dass Leerzeichen bei der Abarbeitung einer Eingabedatei zu überspringen sind.
 %  Diese Syntax findet auch Einsatz bei \textit{Channels}. Anstatt, wie im Falle von Leerzeichen, die Zeichen wegzuwerfen, 
 
-Ob eine Regel den Parser oder Lexer betrifft, hängt vom Anfangsbuchstaben dieser Regel ab. Ist das erste Zeichen ein Großbuchstabe, betrifft es den Lexer; wenn nicht, den Parser. Typischerweise werden als Erstes Regeln für den Parser und als Zweites Regeln für den Lexer definiert. Die Reihenfolge der Lexer-Regeln ist von Relevanz, da in derselben Reihenfolge ANTLR diese Regeln analyisiert.
+Ob eine Regel den Parser oder Lexer betrifft, hängt vom Anfangsbuchstaben dieser Regel ab. Ist das erste Zeichen ein Großbuchstabe, betrifft es den Lexer; wenn nicht, den Parser. Typischerweise werden als Erstes Regeln für den Parser und als Zweites Regeln für den Lexer definiert. Die Reihenfolge der Lexer-Regeln ist von Relevanz, da in derselben Reihenfolge ANTLR diese Regeln analyisiert.~\autoref{lst:antlr_example} zeigt den Aufbau einer exemplaren g4-Datei.
 
-\begin{AntlrCode}[numbers=none, caption={Beispielhafter Aufbau einer Grammatik-Definition für Additionen}]
+\begin{AntlrCode}[numbers=none, caption={Beispielhafter Aufbau einer Grammatik-Definition für Additionen}, label=lst:antlr_example]
 grammar: addition;
 
 // Parser Regeln
@@ -49,19 +47,17 @@ Um die Ergebnisse des Syntaxbaums abarbeiten zu können, bietet ANTLR zwei Entwu
 
 \listener haben im Gegensatz zum \visitor keinen Einfluss auf den Analyse-Vorgang. Stattdessen ruft der \textit{Tree Walker}, der den Syntaxbaum traversiert, die von ANTLR generierten Methoden für den richtigen Knotentyp anhand der Analyse-Regeln auf. Diese Methoden des \listeners liefern keinen Wert zurück, was die Verwaltung eines abstrakten Syntaxbaums erschwert. Aufgrund der Komplexität von \toya sind \listener daher nicht empfehlenswert.
 
-\listener bieten sich gut für Zusatzverhalten an, welches den Syntaxbaum nicht verändert. Typische Verwendungszwecke für \listener ist das Loggen von Informationen oder ermitteln von Metadaten.
+\listener bieten sich gut für Zusatzverhalten an, welches den Syntaxbaum nicht verändert. Typische Verwendungszwecke für \listener sind das Protokollieren von Informationen oder Ermitteln von Metadaten.
 
 \section{Visitor}
 
-Das \visitor Pattern ist ein Entwurfsmuster, das es ermöglicht, eine Operation auf den Elementen einer Objektstruktur auszuführen, ohne die Klassen dieser Elemente zu ändern oder die Struktur selbst zu verändern.
+\visitor ist ein Entwurfsmuster, welches das Ausführen eine Operation auf den Elementen einer Objektstruktur ermöglicht. Die Klassen dieser Elemente oder die Struktur selbst wird dabei nicht verändert. Das Entwurfsmuster besteht aus zwei grundlegenden Komponenten: den Elementen der Objektstruktur und dem Visitor, der die Operation auf den Elementen ausführt. Die Elemente der Struktur implementieren eine gemeinsame Schnittstelle, die den \visitor akzeptiert. Der \visitor selbst definiert Methoden für jede Klasse von Elementen, die er besuchen kann.
 
-Das Entwurfsmuster besteht aus zwei grundlegenden Komponenten: den Elementen der Objektstruktur und dem Visitor, der die Operation auf den Elementen ausführt. Die Elemente der Struktur implementieren eine gemeinsame Schnittstelle, das den \visitor akzeptiert. Der \visitor selbst definiert Methoden für jede Klasse von Elementen, die er besuchen kann.
+Um das Entwurfsmuster zu nutzen, ruft man die \texttt{accept}-Methode des \visitors auf dem Wurzelelement der Struktur auf, welches die Schnittstelle für die Elemente implementiert. Diese Methode wiederum ruft die entsprechende Methode im \visitor auf, wodurch dieser das Element besucht. Das Element gibt sich selbst als Parameter an den \visitor weiter, wodurch dieser auf die Eigenschaften und Methoden des Elements zugreifen und eine Operation darauf ausführen kann. Ein mögliches Problem hierbei ist, dass Fehler leichter enstehen können. Vergisst die Entwickler:in auf den Aufruf einer notwendigen \texttt{accept}-Methode, kommt es nicht zur Versetzung des Programms in einen Ausnahmezustand, sondern die zu parsenden \textit{Token} werden ignoriert.
 
-Um das Entwurfsmuster zu nutzen, ruft man die \texttt{accept}-Methode des \visitors auf dem Wurzelelement der Struktur auf, welches die Schnittstelle für die Elemente implementiert. Diese Methode wiederum ruft die entsprechende Methode im \visitor auf, wodurch dieser das Element besucht. Das Element gibt sich selbst als Parameter an den \visitor weiter, wodurch dieser auf die Eigenschaften und Methoden des Elements zugreifen und eine Operation darauf ausführen kann. Ein mögliches Problem hierbei ist, dass Fehler leichter enstehen können. Vergisst die Entwickler:in auf den Aufruf einer notwendigen \texttt{accept}-Methode, kommt es nicht zur Versetzung des Programms in einen Ausnahmezustand, sondern die zu parsenden Token werden ignoriert.
+Das \visitor Entwurfsmuster hat den Vorteil, dass es das Open-Closed-Prinzip unterstützt, da neue Operationen durch die Erstellung neuer \visitor-Klassen hinzugefügt werden können, ohne die existierenden Elementklassen zu ändern. Außerdem können komplexe Operationen auf der Objektstruktur durchgeführt werden, indem man mehrere \visitor-Klassen erstellt, die jeweils eine Teiloperation durchführen.~\autoref{lst:antlr_visitor} zeigt die Implementierung eines \visitors, der Wertliterale verarbeitet.
 
-Das \visitor Entwurfsmuster hat den Vorteil, dass es das Open-Closed-Prinzip unterstützt, da neue Operationen durch die Erstellung neuer \visitor-Klassen hinzugefügt werden können, ohne die existierenden Elementklassen zu ändern. Außerdem können komplexe Operationen auf der Objektstruktur durchgeführt werden, indem man mehrere \visitor-Klassen erstellt, die jeweils eine Teiloperation durchführen.
-
-\begin{ToyaCode}
+\begin{ToyaCode}[numbers=none, caption={Implementierung eines \visitors für Wertliterale.}, label=lst:antlr_visitor]
 class ExpressionVisitor(val scope: Scope) : toyaBaseVisitor<Expression>() {
     override fun visitValue(valueContext: toyaParser.ValueContext): Expression {
         val value = valueContext.text
