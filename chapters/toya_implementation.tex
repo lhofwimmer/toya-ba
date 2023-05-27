@@ -3,7 +3,7 @@
 
 Die Implementierung des Compilers ist in zwei Teile aufgeteilt: Frontend und Backend. Die Kommunikation zwischen den beiden Teilen erfolgt mithilfe eines abstrakten Syntaxbaums (AST - \textit{abstract syntax tree}), welchen das Frontend erzeugt. Dieses Kapitel geht  auf die Architektur und Implementierung dieser Teile ein.~\autoref{fig:compiler-architecture} zeigt die Archtektur des \toya Compilers. Auf die genauere Implementierung der verschiedenen Schritte des Compilers geht dieses Kapitel ein.
 
-Die Implementierung erfolgt in Kotlin, was das Einbinden von bereits existierende Bibliotheken des JVM Ökosystems problemlos ermöglicht. Konkret geht es dabei um ANTLR und ObjectWeb ASM, welche wichtige Rollen im Compiler übernehmen. Die Möglichkeit, Summentypen in Form von \textit{sealed} Schnittstellen und Klassen implementieren zu können, erleichert die Abarbeitung des ASTs wesentlich.
+Die Implementierung erfolgt in Kotlin, was das Einbinden von bereits existierenden Bibliotheken des JVM Ökosystems problemlos ermöglicht. Konkret geht es dabei um ANTLR und ObjectWeb ASM, welche wichtige Rollen im Compiler übernehmen. Die Möglichkeit, Summentypen in Form von \textit{sealed} Schnittstellen und Klassen implementieren zu können, erleichert die Abarbeitung des ASTs wesentlich.
 
 \begin{figure}[h]
     \caption{Compiler-Architektur}

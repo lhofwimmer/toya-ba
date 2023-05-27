@@ -8,7 +8,7 @@ Um die Funktionalität von \toya zu gewährleisten, sind Tests zu vollziehen. Di
     \item Die Ausgabe des Programms überprüfen
 \end{enumerate}
 
-Die Analyse des Bytecode erfolgt mit dem, in der JDK inkludierten Werkzeug \texttt{javap}. Dieses erlaubt es, den Bytecode einer \texttt{class}-Datei in einer für Menschen leserlicher Form auszugeben. Der Aufruf erfolgt über die Kommandozeile im Format: \texttt{javap -c Main.class}. Das Argument \texttt{-c} zeigt zusätzlich die Bytecode Befehle innerhalb der Methoden an. Die Ausführung der Programme erfolgt über die Kommandozeile mit dem Befehl \texttt{java Main}.
+Die Analyse des Bytecode erfolgt mit dem, in der JDK inkludierten Werkzeug \texttt{javap}. Dieses erlaubt es, den Bytecode einer \texttt{class}-Datei in einer für Menschen leserlichen Form auszugeben. Der Aufruf erfolgt über die Kommandozeile im Format: \texttt{javap -c Main.class}. Das Argument \texttt{-c} zeigt zusätzlich die Bytecode Befehle innerhalb der Methoden an. Die Ausführung der Programme erfolgt über die Kommandozeile mit dem Befehl \texttt{java Main}.
 
 Insgesamt gilt es, die einzelnen Sprachkonstrukte, wie zum Beispiel For-Schleifen und Variablendeklaration und anschließend umfangreichere Programme zu testen.
 
@@ -41,7 +41,7 @@ Hello World
 
 Der zweite Test beschäftigt sich mit der Verwendung von Funktionen und dem Arbeiten mit Funktionsergebnissen.~\autoref{lst:test_2_source} zeigt den Quelltext des Programms. Als erstes ruft dieser Test die \texttt{title} Funktion auf. Diese Funktion gibt die Zeichenkette \textit{This is an addition:} auf der Konsole aus. Anschließend ruft das Programm die \texttt{print} Funktion mit dem Ergebnis der \texttt{add} Funktion auf. Die \texttt{add} Funktion addiert in diesem Fall die ganzzahligen Wertliterale \texttt{1} und \texttt{2}. Dementsprechend gibt die \texttt{print} Funktion den Wert \texttt{3} auf der Konsole aus, wie in~\autoref{lst:test_2_output} zu sehen ist.
 
-Der erste Test behandelt die Ausgabe via der \texttt{print} Funktion, daher wird nicht näher darauf eingegangen. Die \texttt{add} Funktion lädt mit den Opcodes \texttt{iload\_0} und \texttt{iload\_1} die beiden ganzzahligen Parameter der Funktion. \texttt{iadd} addiert anschließend die beiden Werte und liefert diese mit \texttt{ireturn} zurück. Der vollständige Bytecode für die drei Funktionen ist in~\autoref{lst:test_2_bytecode} zu sehen.
+Der erste Test behandelt die Ausgabe via der \texttt{print} Funktion, daher wird an dieser Stelle nicht näher darauf eingegangen. Die \texttt{add} Funktion lädt mit den Opcodes \texttt{iload\_0} und \texttt{iload\_1} die beiden ganzzahligen Parameter der Funktion. \texttt{iadd} addiert anschließend die beiden Werte und liefert diese mit \texttt{ireturn} zurück. Der vollständige Bytecode für die drei Funktionen ist in~\autoref{lst:test_2_bytecode} zu sehen.
 
 \begin{ToyaCode}[numbers=none, caption={Funktionen},label=lst:test_2_source]
 function title() {

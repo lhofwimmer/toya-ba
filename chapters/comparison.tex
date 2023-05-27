@@ -55,7 +55,7 @@ var result = someFunction()
 
 \section{Felder}
 
-Kotlin bietet für die Verwendung von Felder die generische Klasse \texttt{Array} an. Da Felder, wie in anderen Sprachen, auch in Kotlin statisch in ihrer Größe sind, ist die Anzahl an speicherbaren Elementen als Konstruktorparameter anzugeben. Alternativ dazu besteht die Möglichkeit, mit der Hilfs-Funktion \texttt{arrayOf(...)} ein Feld mit Werten zu initialisieren, wie in~\autoref{lst:cmp_kotlinarrays} zu sehen ist. Für primitive Typen existieren Klassen, \toya hingegen beruft sich auf den C-artigen Syntax und verwendet Ausdrücke in der Form von \texttt{new <type>[int-expression]} zur Initialisierung von Felder. Die Größe des Feldes ist statisch und als Ausdruck innerhalb der eckigen Klammern anzugeben. Das Initialisieren eines Feldes und Zuweisen auf einen Index des Feldes ist in~\autoref{lst:cmp_toyaarrays} zu sehen.
+Kotlin bietet für die Verwendung von Feldern die generische Klasse \texttt{Array} an. Da Felder, wie in anderen Sprachen, auch in Kotlin statisch in ihrer Größe sind, ist die Anzahl an speicherbaren Elementen als Konstruktorparameter anzugeben. Alternativ dazu besteht die Möglichkeit, mit der Hilfs-Funktion \texttt{arrayOf(...)} ein Feld mit Werten zu initialisieren, wie in~\autoref{lst:cmp_kotlinarrays} zu sehen ist. Für primitive Typen existieren Klassen, \toya hingegen beruft sich auf den C-artigen Syntax und verwendet Ausdrücke in der Form von \texttt{new <type>[int-expression]} zur Initialisierung von Feldern. Die Größe des Feldes ist statisch und als Ausdruck innerhalb der eckigen Klammern anzugeben. Das Initialisieren eines Feldes und Zuweisen auf einen Index des Feldes ist in~\autoref{lst:cmp_toyaarrays} zu sehen.
 
 \begin{KotlinCode}[numbers=none, caption={Felder in Kotlin}, label=lst:cmp_kotlinarrays]
 var arrayViaClass = IntArray(5)
@@ -78,7 +78,7 @@ var number = if(3 > 4) 5 else 6
 
 \section{For-Schleifen}
 
-Während \toya For-Schleifen ähnlich dem Stil von Java anbietet, wie in~\autoref{lst:cmp_kotlinfor} zu sehen ist, hat Kotlin eine deutlich kompaktere und auch flexiblere Syntax um über eine Menge zu iterieren. So hat die Benutzer:in die Möglichkeit entweder über einen \texttt{int}-Bereich oder auch über eine Enumeration zu iterieren. Ein wesentlicher Unterschied zu Java hinsichtlich For-Schleifen ist die Abwesenheit des Inkrement Operators in \toya. Stattdessen muss die Inkrementierung mithilfe des Zuweisungs- und Additions-Operator erfolgen, zum Beispiel: \texttt{i = i+1}. Die For-Schleifen in~\autoref{lst:cmp_kotlinfor} und~\autoref{lst:cmp_toyafor} zeigen die Iteration über den selben Wertbereich mit einer Sprunggröße von 2.
+Während \toya For-Schleifen ähnlich dem Stil von Java anbietet, wie in~\autoref{lst:cmp_kotlinfor} zu sehen ist, hat Kotlin eine deutlich kompaktere und auch flexiblere Syntax um über eine Menge zu iterieren. So hat die Benutzer:in die Möglichkeit entweder über einen \texttt{int}-Bereich oder auch über eine Enumeration zu iterieren. Ein wesentlicher Unterschied zu Java hinsichtlich For-Schleifen ist die Abwesenheit des Inkrement Operators in \toya. Stattdessen muss die Inkrementierung mithilfe des Zuweisungs- und Additions-Operators erfolgen, zum Beispiel: \texttt{i = i+1}. Die For-Schleifen in~\autoref{lst:cmp_kotlinfor} und~\autoref{lst:cmp_toyafor} zeigen die Iteration über den selben Wertbereich mit einer Sprunggröße von 2.
 
 \begin{KotlinCode}[numbers=none, caption={Einfache For-Schleife in Kotlin}, label=lst:cmp_kotlinfor]
 for (i in 0..10 step 2) {

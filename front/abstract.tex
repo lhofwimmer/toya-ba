@@ -1,8 +1,14 @@
 \chapter{Abstract}
 
-
 \begin{english} %switch to English language rules
-This should be a 1-page (maximum) summary of your work in English.
-%und hier geht dann das Abstract weiter...
+\Toya is a strongly typed, Turing-complete programming language for the Java Virtual Machine (JVM). \Toya allows the creation of functions, variables, arithmetic expressions, and primitive control flow in the form of if-branches and for-loops.
+
+Variables can be of type \texttt{int}, \texttt{double}, \texttt{string}, or \texttt{boolean}. It is also possible to create arrays of these types. With the exception of arrays, the explicit specification of the variable type is not possible. Instead, \toya determines the variable type based on the type of the assigned expression.
+
+The compiler for \toya can be divided into two parts: frontend and backend. The frontend parses the source code to create an abstract syntax tree (AST). The backend then uses the AST to generate bytecode for the JVM. \Toya produces class files which the JVM then can process and evaluate. The compiler for \toya is completely implemented in Kotlin/JVM. 
+
+The frontend uses the fourth version of ANTLR as its core library. ANTLR generates the parser for \toya based on a grammar file containing the language specification. This parser uses the visitor pattern to traverse the syntax tree and parse it into an AST. The AST is enriched with type information among other things. Afterwards the backend uses this type information to differentiate between the structures of \toya.
+
+The backend uses ObjectWeb ASM as its core library to generate bytecode and class files. First of all, the compiler creates a single class called \texttt{Main} in which all the functions of the program reside. Even if a \toya program is distributed over several files the compiler still only generates a single class file. The backend then traverses the AST. Each class of the AST has a \texttt{generate} function which generates the correct bytecode for a corresponding node of the AST. As soon as the backend has finished traversing the AST the \toya compiler generates an executable class file.
 \end{english}
 
