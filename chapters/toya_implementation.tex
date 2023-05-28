@@ -3,7 +3,7 @@
 
 Die Implementierung des Compilers ist in zwei Teile aufgeteilt: Frontend und Backend. Die Kommunikation zwischen den beiden Teilen erfolgt mithilfe eines abstrakten Syntaxbaums (AST - \textit{abstract syntax tree}), welchen das Frontend erzeugt. Dieses Kapitel geht  auf die Architektur und Implementierung dieser Teile ein.~\autoref{fig:compiler-architecture} zeigt die Archtektur des \toya Compilers. Auf die genauere Implementierung der verschiedenen Schritte des Compilers geht dieses Kapitel ein.
 
-Die Implementierung erfolgt in Kotlin, was das Einbinden von bereits existierenden Bibliotheken des JVM Ökosystems problemlos ermöglicht. Konkret geht es dabei um ANTLR und ObjectWeb ASM, welche wichtige Rollen im Compiler übernehmen. Die Möglichkeit, Summentypen in Form von \textit{sealed} Schnittstellen und Klassen implementieren zu können, erleichert die Abarbeitung des ASTs wesentlich.
+Die Implementierung erfolgt in Kotlin, was das Einbinden von bereits existierenden Bibliotheken des JVM Ökosystems problemlos ermöglicht. Konkret geht es dabei um ANTLR und ObjectWeb ASM, welche wichtige Rollen im Compiler übernehmen. Die Möglichkeit, Summentypen in Form von \textit{sealed} Schnittstellen und Klassen implementieren zu können, erleichert die Abarbeitung des AST wesentlich.
 
 \begin{figure}[h]
     \caption{Compiler-Architektur}
@@ -28,11 +28,11 @@ Als Ausgangspunkt des Frontends dient die Grammatik, anhand welcher ANTLR die le
 
 Beim Versuch, ein Schlüsselwort als Variablenname zu Verwenden tritt der Ausnahmezustand \texttt{VariableNameIsKeywordException} ein. 
 
-\subsection{Abarbeitung des Syntaxbaum}
+\subsection{Abarbeitung des Syntaxbaumes}
 
-Wie bereits in \nameref{cha:antlr} erläutert, bietet ANTLR die Entwurfsmuster \visitor und \listener an, um den Syntaxbaum zu traversieren. \Toya verwendet das \visitor-Muster aufgrund des Umfangs des zu traversierenden Syntaxbaums. Das Resultat des \visitors ist ein AST mit dem Wurzelelement \texttt{Compilation}. Diese Klasse speichert die Funktionssignaturen, globale Variablen und ein globales \scope, welches sich über das ganze Programm erstreckt. Alle weiteren \texttt{Scopes} nehmen dieses globale \scope als Grundlage. 
+Wie bereits in \nameref{cha:antlr} erläutert, bietet ANTLR die Entwurfsmuster \visitor und \listener an, um den Syntaxbaum zu traversieren. \Toya verwendet das \visitor-Muster aufgrund des Umfangs des abzuarbeitenden Syntaxbaumes. Das Resultat des \visitors ist ein AST mit dem Wurzelelement \texttt{Compilation}. Diese Klasse speichert die Funktionssignaturen und ein globales \scope, welches sich über das ganze Programm erstreckt. Alle weiteren \texttt{Scopes} nehmen dieses globale \scope als Grundlage. 
 
-Die wichtigste Methode des \visitor, welche die Abarbeitung des Syntaxbaums überhaupt ermöglicht ist die \texttt{accept} Methode. Diese Methode benötigt als Parameter einen \visitor vom generischen Typ \texttt{ParseTreeVisitor}. \Toya implementiert folgende \visitor:
+Die wichtigste Methode des \visitors, welche die Abarbeitung des Syntaxbaumes überhaupt ermöglicht ist die \texttt{accept} Methode. Diese Methode benötigt als Parameter einen \visitor vom generischen Typ \texttt{ParseTreeVisitor}. \Toya implementiert folgende \visitors:
 
 \begin{itemize}
     \item CompilationVisitor
@@ -44,7 +44,7 @@ Die wichtigste Methode des \visitor, welche die Abarbeitung des Syntaxbaums übe
     \item FunctionVisitor
 \end{itemize}
 
-Um das Traversieren der Knoten des Syntaxbaums zu ermöglichen, generiert ANTLR für alle Regeln der Grammatik-Definition Methoden im Format \texttt{visit<RuleName>(ctx: toyaParser.<RuleName>Context)}. Jede dieser Methoden liefert einen Wert vom generischen Typ des \texttt{toyaBaseVisitor} zurück.~\autoref{lst:impl_visitor} zeigt die \texttt{visit}-Funktion für Variablendeklarationen.
+Um das Traversieren der Knoten des Syntaxbaumes zu ermöglichen, generiert ANTLR für alle Regeln der Grammatik-Definition Methoden im Format \texttt{visit<RuleName>(ctx: toyaParser.<RuleName>Context)}. Jede dieser Methoden liefert einen Wert vom generischen Typ \texttt{toyaBaseVisitor} zurück.~\autoref{lst:impl_visitor} zeigt die \texttt{visit}-Funktion für Variablendeklarationen.
 
 \begin{KotlinCode}[numbers=none, caption={\visitor-Funktion zum Erstellen eines \texttt{VariableDeclarationStatement}}, label=lst:impl_visitor]
 class StatementVisitor(val scope: Scope) : toyaBaseVisitor<Statement>() {
@@ -63,7 +63,7 @@ Zur Behandlung von Syntaxfehler bietet ANTLR die Klasse \texttt{BaseErrorListene
 
 \subsection{Typ-System}
 
-Die Basis für das Typ-System in \toya ist die Schnittstelle \texttt{Type} und die davon abgeleitete Enum-Klasse \texttt{BasicType}, welche alle in \toya verfügbaren Typen umfasst. \Toya erlaubt keine explizite Definition des Typs einer Variable, weshalb der Typ immer vom Wert der Variable abzuleiten ist. Zum ermitteln des Typs kommt die Klasse \texttt{TypeResolver} zum Einsatz. Anhand von regulären Ausdrücken ermittelt dieser den Typ des Wert-Literals, wie in~\autoref{lst:impl_getvalue} zu sehen ist.
+Die Basis für das Typ-System in \toya ist die Schnittstelle \texttt{Type} und die davon abgeleitete Enum-Klasse \texttt{BasicType}, welche alle in \toya verfügbaren Typen beinhaltet. \Toya erlaubt keine explizite Definition des Typs einer Variable, weshalb der Typ immer vom Wert der Variable abzuleiten ist. Den Typ einer Variable ermittelt \toya mithilfe der Klasse \texttt{TypeResolver}. Anhand von regulären Ausdrücken ermittelt die Funktion \texttt{getFromValue} den Typ des Wert-Literals, wie in~\autoref{lst:impl_getvalue} zu sehen ist.
 
 \begin{KotlinCode}[numbers=none, caption={Methode zur Ermittlung des Typs bei Wert-Literalen}, label={lst:getFromValue}, label=lst:impl_getvalue]
 fun getFromValue(value: String?): Type {
@@ -76,9 +76,9 @@ fun getFromValue(value: String?): Type {
 }
 \end{KotlinCode}
 
-Da nun die jeder Ausdruck Typinformationen besitzt, ermöglicht das die semantische Analyse von Ausdrücken. Die Erweiterungsfunktion \texttt{Type.checkTypeMatch} überprüft, ob beide Operanden vom selben Typ sind. Wenn nicht, kommt es zum Ausnahmezustand \texttt{BinaryOperationTypeMismatchException}. Die Implementierung für\break \texttt{Type.checkTypeMatch} ist in~\autoref{lst:impl_checktypematch} zu sehen.
+Da nun jeder Ausdruck Typinformationen besitzt, ermöglicht das die semantische Analyse von Ausdrücken. Die Erweiterungsfunktion \texttt{Type.checkTypeMatch} überprüft, ob beide Operanden vom selben Typ sind. Wenn nicht, kommt es zu einem Ausnahmezustand. Die Implementierung für \texttt{Type.checkTypeMatch} ist in~\autoref{lst:impl_checktypematch} zu sehen.
 
-\begin{KotlinCode}[numbers=none, caption={Methode zur Überprüfung, dass Operanden übereinstimmende Typen haben}, label=lst:impl_checktypematch]
+\begin{KotlinCode}[numbers=none, caption={Methode zur Überprüfung von übereinstimmende Typen zweier Operanden}, label=lst:impl_checktypematch]
 fun Type.checkTypeMatch(rhs: Type) {
     if (this != rhs) throw BinaryOperationTypeMismatchException(this, rhs)
 }    
@@ -86,21 +86,21 @@ fun Type.checkTypeMatch(rhs: Type) {
 
 \subsection{Standardfunktionen}
 
-Standardfunktionen sind Funktionen, welche jedem \toya-Programm ohne Weiteres zur Verfügung stehen. Standardfunktionen sind kein Bestandteil der lexikalischen Analyse. Die Funktion \texttt{visitFunctionCall} des \texttt{ExpressionVisitors} prüft mithilfe der Funktion \texttt{isStandardFunction}, ob es sich bei einer Funktion um eine Standardfunktion handelt. Ist dies der Fall, erzeugt der \visitor kein Objekt vom Typ \texttt{FunctionCall}, sondern ein Objekt, welches von \texttt{StandardFunction} erbt. Im Fall von \texttt{print} ist das zum Beispiel \texttt{PrintFunction}.
+Standardfunktionen sind Funktionen, welche jedem \toya-Programm ohne Weiteres zur Verfügung stehen. Standardfunktionen sind kein Bestandteil der lexikalischen Analyse. Die Funktion \texttt{visitFunctionCall} des \texttt{ExpressionVisitors} prüft mithilfe der Funktion \texttt{isStandardFunction}, ob es sich bei einer Funktion um eine Standardfunktion handelt. Ist dies der Fall, erzeugt der \visitor kein Objekt vom Typ \texttt{FunctionCall}, sondern ein Objekt, welches von \texttt{StandardFunction} erbt. Im Falle der Funktion \texttt{print} ist das zum Beispiel \texttt{PrintFunction}.
 
-Standardmäßig bietet \toya die Standardfunktion \texttt{print} an, welche einen Aufruf der Java Funktion \texttt{System.out.println} durchführt. Die Architektur des \toya-Compilers ist darauf ausgelegt, weitere Standardfunktionen hinzufügen zu können. Besteht dieser Wunsch, sind an folgenden Stellen von Entwicklerseite her Veränderungen vorzunehmen:
+Standardmäßig bietet \toya die Standardfunktion \texttt{print} an, welche einen Aufruf der Java Funktion \texttt{System.out.println} durchführt. Die Architektur des \toya Compilers ist darauf ausgelegt weitere Standardfunktionen hinzufügen zu können. Besteht dieser Wunsch, sind an folgenden Stellen von Entwicklerseite her Veränderungen vorzunehmen:
 
 \begin{itemize}
     \item Im \texttt{when} innerhalb der \texttt{ExpressionVisitor.visitFunctionCall} Funktion muss ein Fall für die zu implementierenden Funktion hinzugefügt werden.
-    \item Innerhalb der \texttt{StandardFunctions.kt} Datei: In der \texttt{standardFunctions} Liste ist eine FunktionsSignatur der neuen Standardfunktion hinzuzufügen und eine Klasse, welche von \texttt{StandardFunction} und \texttt{Expression} erbt, zu definieren.
-    \item In der \texttt{StandardFunctionGenerator} Klasse ist der zu generierende Bytecode zu definieren.
+    \item Innerhalb der \texttt{StandardFunctions.kt} Datei: In der \texttt{standardFunctions} Liste ist eine FunktionsSignatur der neuen Standardfunktion hinzuzufügen und eine Klasse, welche \texttt{StandardFunction} implementiert und von und \texttt{Expression} erbt, zu definieren.
+    \item In der \texttt{StandardFunctionGenerator} Klasse ist der Code zum Generieren des Bytecodes zu definieren.
 \end{itemize}
 
 \section{Abstrakter Syntaxbaum}
 
-Die explizite Umwandlung auf einen abstrakten Syntaxbaum ist theoretisch nicht immer nötig. \Toya verwendet aber ANTLR und der daraus resultierende Syntaxbaum enthält teilweise zu viele Informationen. Teilweise fehlen auch notwendige Informationen, wie zum Beispiel die über den Typ eines Ausdrucks. Daher macht es Sinn, diesen Syntaxbaum auf einen AST umzubauen.
+Die explizite Umwandlung auf einen abstrakten Syntaxbaum ist theoretisch nicht immer nötig. \Toya verwendet aber ANTLR und der daraus resultierende Syntaxbaum enthält teilweise zu viele Informationen. Teilweise fehlen auch notwendige Informationen, wie zum Beispiel Typinformationen eines Ausdrucks. Daher macht es Sinn, diesen Syntaxbaum auf einen AST umzubauen.
 
-Ein großteil des AST behandelt die Einteilung von Ausdrücken und Anweisungen in ein granulareres Klassen-Schema. Die Einteilung in zum Beispiel \texttt{LessEqualExpression} und \texttt{ForStatement} anstatt die bloße Gliederung in \texttt{Expression} und \texttt{Statement} ermöglicht eine gut skalierbare und verständliche Lösung für die Bytecode-Generierung im Backend. Die Klassenhierarchie für \texttt{Statement} und \texttt{Expression} ist in~\autoref{fig:ast-architecture} zu sehen. Schnittstellen und abstrakte Klassen sind respektive grün und orange markiert.
+Ein Großteil des AST behandelt die Einteilung von Ausdrücken und Anweisungen in ein granulareres Klassen-Schema. Die Einteilung in zum Beispiel \texttt{LessEqualExpression} und \texttt{ForStatement} anstatt die bloße Gliederung in \texttt{Expression} und \texttt{Statement} ermöglicht eine gut skalierbare und nachvollziehbare Lösung für die Bytecode-Generierung im Backend. Die Klassenhierarchie für \texttt{Statement} und \texttt{Expression} ist in~\autoref{fig:ast-architecture} zu sehen. Schnittstellen sind grün markiert, abstrakte Klassen orange.
 
 \begin{figure}[h]
     \caption{AST-Architektur für Ausdrücke und Anweisungen.}
@@ -109,20 +109,20 @@ Ein großteil des AST behandelt die Einteilung von Ausdrücken und Anweisungen i
     \label{fig:ast-architecture}
 \end{figure}
 
-Kotlin bietet zur kompakten Erstellung von Datenobjekten sogenannte \textit{data classes} an. \texttt{data class} Objekte erzeugen für Mitglieder des primären Konstruktor folgende Funktionen:
+Kotlin bietet zur kompakten Erstellung von Datenobjekten sogenannte \textit{data classes} an. \texttt{data class} Objekte erzeugen für Parameter des primären Konstruktors folgende Funktionen:
 
 \begin{itemize}
-    \item \texttt{equals()} und \texttt{hashCode()}.
-    \item \texttt{toString()} im Format \texttt{Addition(left=42, right=31)}.
-    \item \texttt{componentN()}, die bei der Destrukturierung von Objekten verwendet werden. Hierbei ist die Reihenfolge der Definition relevant.
-    \item \texttt{copy()} zum durchführen einer tiefen Kopie des Objekte.
+    \item \texttt{equals} und \texttt{hashCode}.
+    \item \texttt{toString} im Format \texttt{Addition(left=42, right=31)}.
+    \item \texttt{component<1-n>}, die bei der Destrukturierung von Objekten verwendet werden. Hierbei ist die Reihenfolge der Definition relevant.
+    \item \texttt{copy} zum durchführen einer tiefen Kopie des Objekte.
 \end{itemize}
 
-\Toya verwendet \textit{data classes} für fast alle Klassen des AST. Ausgenommen sind Basisklassen, von denenen andere Klassen ableiten, da die Vererbung von \textit{data classes} zu Problemen mit dem Verhalten von \textit{equals()} zum Beispiel führt. Java bietet seit Version 14 \texttt{record} als Äquivalent zu diesem Konzept an. Jedoch fehlen bei \texttt{record} die \texttt{copmonentN()} und \texttt{copy()} Funktionen.
+\Toya verwendet \textit{data classes} für fast alle Klassen des AST. Ausgenommen davon sind Basisklassen, von denen andere Klassen ableiten, da die Vererbung einer \textit{data class} zu Problemen mit dem Verhalten der \texttt{equals} Funktion führt. Java bietet seit Version 14 das Schlüsselwort \texttt{record} als Äquivalent zu diesem Konzept an. Jedoch fehlen bei \texttt{record} die \texttt{copmonentN} und \texttt{copy} Funktionen.
 
-Die \texttt{Scope} Klasse ist eine zentrale Komponente in der Verwaltung des AST und wird unter anderem für die semantische Analyse benötigt. Sie speichert die lokalen Variablen für einen gegebenen Block und die Methodensignaturen eines \toya Programms. Bei Operationen, deren Operanden lokale Variablen sind, überprüft \toya mithilfe von \texttt{Scope}, ob diese Variablen im momentanten Kontext zur Verfügung stehen.
+Die \texttt{Scope} Klasse ist eine zentrale Komponente zur Verwaltung des AST und wird unter anderem für die semantische Analyse benötigt. Sie speichert die lokalen Variablen für einen gegebenen Block und die Methodensignaturen eines \toya Programms. Bei Operationen, deren Operanden lokale Variablen sind, überprüft \toya mithilfe von \texttt{Scope}, ob diese Variablen im momentanten Kontext zur Verfügung stehen.
 
-Im Zuge der Bytecode-Generierung ermittelt \toya mithilfe \scope den Index einer lokalen Variable. Hierbei reicht es nicht aus, den Index der Variable in der Liste \texttt{localVariables} zu ermitteln. Variablen vom Typ \texttt{double} und \texttt{long} benötigen zwei Plätze im \textit{Run-Time Constant Pool}, da deren Indizes 16 Bit, anstatt der üblichen acht Bit einnehmen. Da \toya den Typ Double implementiert, ist diese Eigenschaft zu berücksichtigen. Diese Berechnung erfolgt durch eine Reduktions-Operation in der Funktion \texttt{getLocalVariableIndex}, wie in~\autoref{lst:impl_localvariable} zu sehen ist. Diese Reduktions-Operation summiert alle Indizes bis inklusive dem Index der gesuchten Variable auf und addiert pro Index eins, beziehungsweise zwei, wenn die Variable vom Typ \texttt{double} ist.
+Im Zuge der Bytecode-Generierung ermittelt \toya mithilfe \scope den Index einer lokalen Variable. Hierbei reicht es nicht aus, den Index der Variable in der Liste \texttt{localVariables} zu ermitteln. Variablen vom Typ \texttt{double} und \texttt{long} benötigen zwei Plätze im \textit{Run-Time Constant Pool}, da deren Indizes 16 Bit, anstatt der üblichen acht Bit einnehmen. Da \toya den Typ Double implementiert, ist diese Eigenschaft zu berücksichtigen. Diese Berechnung erfolgt durch eine Reduktions-Operation in der Funktion \texttt{getLocalVariableIndex}, wie in~\autoref{lst:impl_localvariable} zu sehen ist. Diese Reduktions-Operation summiert alle Indizes inklusive dem der gesuchten Variable auf. Für Ganzzahlen addiert die Operation eins, für Gleitkommazahlen zwei zum Gesamtergebnis.
 
 \begin{KotlinCode}[numbers=none, caption={Ermittlung des Index einer Variable in einem \texttt{Scope}}, label=lst:impl_localvariable]
 fun getLocalVariableIndex(varName: String) : Int {
@@ -139,7 +139,7 @@ fun getLocalVariableIndex(varName: String) : Int {
 
 \section{Backend}
 
-Das Backend hat als zentrale Aufgabe die Code-Generierung anhand des abstrakten Syntaxbaums, den das Frontend erzeugt hat. Zum Erzeugen des Bytecodes verwendet das Backend ObjectWeb ASM als zentrale Bibliothek. Als Resultat liefert das Backend ein Byte-Feld, das anschließend ein \texttt{FileOutputStream} in eine class-Datei schreibt.
+Das Backend hat als zentrale Aufgabe die Code-Generierung anhand des abstrakten Syntaxbaumes, den das Frontend erzeugt hat. Zum Erzeugen des Bytecodes verwendet das Backend ObjectWeb ASM als zentrale Bibliothek. Als Resultat liefert das Backend ein Byte-Feld, das anschließend ein \texttt{FileOutputStream} in eine class-Datei schreibt.
 
 \subsection{ObjectWeb ASM}
 
@@ -147,7 +147,7 @@ ObjectWeb ASM ist eine Bibliothek zum Lesen, Bearbeiten und Erzeugen von Bytecod
 
 Da \toya keine Definition von Klassen erlaubt, reicht es aus, eine statische Klasse, unabhängig vom eigentlichen Quelltext zu generieren. Version dieser Klasse ist 52, was Java 8 entspricht. Einen höhere Version ist nicht nötig, da alle Bestandteile von \toya sehr primitiv sind.
 
-Klassen erstellt ASM mithilfe des \texttt{ClassWriter}. Der Konstruktor dieser Klasse hat einen Parameter \texttt{flags}. Im Falle von \toya ist dies \texttt{COMPUTE\_FRAMES + COMPUTE\_MAXS}. \texttt{COMPUTE\_MAXS} und \texttt{COMPUTE\_FRAMES} ermöglicht die automatische Berechnung der maximal erlaubten Anzahl an lokalen Variablen, die maximale Größe des Stacks und die Berechnung aller \textit{Stack Map Frames}. Siehe dazu~\autoref{lst:impl_classwriter}.
+Klassen erstellt ASM mithilfe des \texttt{ClassWriter}. Der Konstruktor dieser Klasse hat einen Parameter \texttt{flags}, das der \toya Compiler mit \texttt{COMPUTE\_FRAMES + COMPUTE\_MAXS} initialisiert. \texttt{COMPUTE\_MAXS} und \texttt{COMPUTE\_FRAMES} ermöglicht die automatische Berechnung der maximal erlaubten Anzahl an lokalen Variablen, die maximale Größe des Stacks und die Berechnung aller \textit{Stack Map Frames}. Siehe dazu~\autoref{lst:impl_classwriter}.
 
 \begin{KotlinCode}[numbers=none, caption={Erstellung einer Klasse mithilfe ObjectWeb ASM}, label=lst:impl_classwriter]
 val classWriter: ClassWriter = ClassWriter(
@@ -163,9 +163,9 @@ classWriter.visit(
 )
 \end{KotlinCode}
 
-Zum Erzeugen von Methoden und und deren Logik bietet ObjectWeb ASM die Klasse \texttt{MethodWriter}. Diese Klasse ermöglicht das Schreiben der Bytecode Anweisungen innerhalb einer Methode. Außerdem ermöglicht \texttt{MethodWriter} unter anderem auch das Setzen von \textit{Labels} um Sprung-Befehle durchführen zu können. Sprung-Befehle sind für den Kontrollfluss wichtig, um in If-Verzweigungen nicht zutreffende Zweige zu überspringen und um bei For-Schleifen an den Beginn der Schleife zurückzukehren.~\autoref{lst:impl_generateexample} zeigt die \texttt{generate}-Funktion zum Generieren von Wertliteralen mithilfe von ObjectWeb ASM.
+Zum Erzeugen von Methoden und und deren Logik bietet ASM die Klasse \texttt{MethodWriter}. Diese Klasse ermöglicht das Schreiben der Bytecode Anweisungen innerhalb einer Methode. Außerdem ermöglicht \texttt{MethodWriter} unter anderem auch das Setzen von \textit{Labels} um Sprung-Befehle durchführen zu können. Sprung-Befehle sind für den Kontrollfluss wichtig, um in If-Verzweigungen nicht zutreffende Zweige zu überspringen und um bei For-Schleifen an den Beginn der Schleife zurückzukehren.~\autoref{lst:impl_generateexample} zeigt die \texttt{generate}-Funktion zum Generieren von Wertliteralen mithilfe von ObjectWeb ASM.
 
-\begin{KotlinCode}[numbers=none, caption={\texttt{generate()} Funktion, welche Wert-Literale erzeugt.}, label=lst:impl_generateexample]
+\begin{KotlinCode}[numbers=none, caption={\texttt{generate} Funktion, welche Wert-Literale erzeugt.}, label=lst:impl_generateexample]
 private fun generate(value: Value) {
     val type = value.type
     val stringValue = value.value
@@ -190,22 +190,22 @@ private fun generate(value: Value) {
 
 \subsection{Summentypen}
 
-Im Backend kommen Summentypen in Form von \textit{sealed classes} zum Einsatz. \textit{Sealed classes} in Kotlin besitzen die besondere Eigenschaft, dass alle Kindklassen zur Übersetzungszeit vollständig bekannt sind. Dies ermöglicht zum Beispiel die Verwendung von erschöpfenden \texttt{when}-Ausdrücken in Kombination mit Polymorphismus. Kindklassen einer \textit{sealed class} sind alle im selben Modul zu definieren. Neben Klassen können auch Schnittstellen als \texttt{sealed} markiert sein. Ist eine Klasse als \textit{sealed} markiert, ist diese Klasse zusätzlich implizit eine abstrakte Klasse.
+Im Backend kommen Summentypen in Form von \textit{sealed classes} zum Einsatz. \textit{Sealed classes} in Kotlin besitzen die besondere Eigenschaft, dass alle Kindklassen zur Übersetzungszeit vollständig bekannt sind. Dies ermöglicht zum Beispiel die Verwendung von erschöpfenden \texttt{when}-Ausdrücken in Kombination mit Polymorphismus. Kindklassen einer \textit{sealed class} sind alle im selben Modul zu definieren. Neben Klassen können auch Schnittstellen als \texttt{sealed} markiert sein. \textit{Selead classes} sind zusätzlich implizit eine abstrakte Klasse.
 
 Wichtige \textit{sealed classes} und \textit{sealed interfaces} des abstrakten Syntaxbaums sind folgende:
 
 \begin{itemize}
     \item \texttt{ArithmeticOperation}: Umfasst Ausdrücke Addition, Subtraktion, Multiplikation und Division.
-    \item \texttt{BooleanExpression}: Umfasst Ausdrücke für die logischen Operatoren \texttt{Und} und \texttt{Oder}. Eine \texttt{BooleanExpression} liefert immer einen boole'schen Wert zurück.
+    \item \texttt{BooleanExpression}: Umfasst Ausdrücke für die logischen Operatoren Und und Oder. Eine \texttt{BooleanExpression} liefert immer einen boole'schen Wert zurück.
     \item \texttt{ComparativeExpression}: Umfasst Ausdrücke für Größer, Größer-Gleich, Gleich, Kleiner, Kleiner-Gleich und Ungleich. Eine \texttt{ComparativeExpression} liefert immer einen boole'schen Wert zurück.
     \item \texttt{Branch}: Umfasst die beiden Möglichkeiten, Verzweigungen im Kontrollfluss entweder als Anweisungsblock oder als einzelnen Ausdruck zu definieren.
 \end{itemize}
 
 \subsection{Architektur der Code-Generierung}
 
-Der Ablauf der Code-Generierung ist auf fünf Klassen aufgeteilt, wie in~\autoref{fig:backend-flowchart} zu sehen ist. Als Einstiegspunkt dient immer die Klasse \texttt{ByteCodeGenerator}. Diese Klasse erzeugt eine öffentliche Klasse, die von \texttt{Object} erbt. Als nächstes ruft \texttt{ByteCodeGenerator} für jede Funktion die \texttt{generate}-Methode des \texttt{FunctionGenerator} auf.
+Der Ablauf der Code-Generierung ist auf fünf Klassen aufgeteilt, wie in~\autoref{fig:backend-flowchart} zu sehen ist. Als Einstiegspunkt dient immer die Klasse \texttt{ByteCodeGenerator}. Diese Klasse erzeugt eine öffentliche Klasse, die von \texttt{Object} erbt. Als nächstes ruft die Klasse \texttt{ByteCodeGenerator} die \texttt{generate}-Methode der Klasse \texttt{FunctionGenerator} für jede Funktion des \toya Programmes auf.
 
-Der \texttt{FunctionGenerator} iteriert über die Liste aller Anweisungen der Funktion und ruft für jede Anweisung die \texttt{generate}-Funktion des \texttt{StatementGenerator auf}. Nach dem durchlaufen der Anweisungsliste überprüft der \texttt{FunctionGenerator}, ob die Funktion als letzte Anweisung eine Rückgabeanweisung definiert und ob die Funktion überhaupt einen Wert zurückliefert. Liefert nun die Funktion einen Wert zurück, hat aber keine Rückgabeanweisung an letzter Stelle, ist diese Anweisung zu generieren. Anhand des Typs der letzten Anweisung der Funktion wählt der \texttt{FunctionGenerator} nun den richtigen Opcode aus und generiert die Anweisung mithilfe von ObjectWeb ASM. Ist die letzte Anweisung zum Beispiel eine Ganzzahl, generiert der \toya-Compiler den Opcode \texttt{ireturn}.
+Der \texttt{FunctionGenerator} iteriert über die Liste aller Anweisungen der Funktion und ruft für jede Anweisung die \texttt{generate}-Funktion des \texttt{StatementGenerator auf}. Nach dem durchlaufen der Anweisungsliste überprüft der \texttt{FunctionGenerator}, ob die Funktion als letzte Anweisung eine Rückgabeanweisung definiert und ob die Funktion überhaupt einen Wert zurückliefert. Liefert die Funktion einen Wert zurück, hat aber keine Rückgabeanweisung an letzter Stelle, muss der Compiler diese Anweisung generieren. Anhand des Typs der letzten Anweisung der Funktion wählt der \texttt{FunctionGenerator} nun den richtigen Opcode aus und generiert die Anweisung mithilfe von ObjectWeb ASM. Ist die letzte Anweisung zum Beispiel ein Ausdruck vom Typ \texttt{int}, generiert der \toya Compiler den Opcode \texttt{ireturn}.
 
 Der \texttt{StatementGenerator} generiert entweder eine Anweisung selbst oder delegiert diese Aufgabe an den \texttt{ExpressionGenerator}, wenn es sich bei der Anweisung um einen Ausdruck handelt. Konkret generiert der \texttt{StatementGenerator} Bytecode für Variablen- und Felddeklarationen, Variablenzuweisungen, explizite Rückgabeanweisungen und For-Schleifen. Ein Großteil der Komplexität in dieser Klasse stammt daher, dass verschiedene Opcode für die verschiedenen Typen von \toya zu beachten sind.
 
@@ -216,11 +216,11 @@ Der \texttt{StatementGenerator} generiert entweder eine Anweisung selbst oder de
     \label{fig:backend-flowchart}
 \end{figure}
 
-Um den Mehraufwand für die Berücksichtigung jedes Typs so gut wie möglich zu minimieren, sind die Erweiterungsfunktionen \texttt{Type.handleTypeGroup()} und\break \texttt{Type.handleTypeArrays()} definiert, die Implementierung und Verwendung von letzteres ist in~\autoref{lst:impl_handletypearrays} zu sehen. Diese beiden Funktionen höherer Ordnung benötigen eine Funktion für jeden Typ als Parameter. Dadurch liegt in jeder Funktion nur der Code, der für den entsprechenden Typ relevant ist.
+Um den Mehraufwand für die Berücksichtigung jedes Typs so gut wie möglich zu minimieren, sind die Erweiterungsfunktionen \texttt{Type.handleTypeGroup} und\break \texttt{Type.handleTypeArrays} definiert, die Implementierung und Verwendung von letzteres ist in~\autoref{lst:impl_handletypearrays} zu sehen. Diese beiden Funktionen höherer Ordnung benötigen eine Funktion für jeden Typ als Parameter. Dadurch liegt in jeder Funktion nur der Code, der für den entsprechenden Typ relevant ist.
 
 Ebenso ist auch die Ausnahmebehandlung mithilfe dieser Funktionen umsetzbar. Versucht man zum Beispiel zwei Referenzen oder boole'sche Ausdrücke zu addieren, tritt der Ausnahmezustand \texttt{UnsupportedOperationOnTypeException} ein. Dadurch, dass das Verhalten für jeden Typ verpflichtend definiert sein muss, vermeidet die Entwickler:in auch, dass das Verhalten für einen Typ ungeklärt bleibt.
 
-\begin{KotlinCode}[numbers=none, caption={Die Erweiterungsfunktion \texttt{Type.handleTypeArrays()}, um den richtigen Opcode zum Speichern einer Variable zu ermitteln.}, label=lst:impl_handletypearrays]
+\begin{KotlinCode}[numbers=none, caption={Die Erweiterungsfunktion \texttt{Type.handleTypeArrays}, um den richtigen Opcode zum Speichern einer Variable zu ermitteln.}, label=lst:impl_handletypearrays]
 fun <T> Type.handleTypeArrays(
     ia: () -> T,
     da: () -> T,
@@ -259,9 +259,9 @@ Der \texttt{ExpressionGenerator} generiert Ausdrücke oder delegiert Standardfun
     \item If-Ausdrücke
 \end{itemize}
 
-Der \texttt{StandardFunctionGenerator} generiert alle Standardfunktionen. Im Falle der \texttt{PrintFunction} verwendet \toya die \texttt{System.out.println} Implementierung von Java. In einem ersten Schritt ermittelt \toya die Referenz des \texttt{PrintSteam} Typs in Form der statischen Variable \texttt{out} und evaluiert \toya den Wert des Ausdrucks, der auszugeben ist. Anschließend wird die \texttt{println} Funktion des \texttt{out} Objekts aufgerufen. Die \texttt{println} Funktion verwendet den oben aufliegenden Wert am Operanden-Stack, weswegen dieser Wert im ersten Schritt bereits evaluiert wurde. Die konkrete Implementierung, wie in~\autoref{lst:impl_println} zu sehen ist, wurde \textcite{enkelTutorial} entnommen.
+Der \texttt{StandardFunctionGenerator} generiert alle Standardfunktionen. Im Falle der \texttt{PrintFunction} verwendet \toya die \texttt{System.out.println} Implementierung von Java. In einem ersten Schritt ermittelt \toya die Referenz des \texttt{PrintSteam} Typs in Form der statischen Variable \texttt{out} und evaluiert den auszugebenden Wert des Ausdrucks. Anschließend wird die \texttt{println} Funktion des \texttt{out} Objekts aufgerufen. Die \texttt{println} Funktion verwendet den oben aufliegenden Wert am Operanden-Stack, weswegen dieser Wert im ersten Schritt bereits evaluiert wurde. Die konkrete Implementierung, wie in~\autoref{lst:impl_println} zu sehen ist, wurde \textcite{enkelTutorial} entnommen.
 
-\begin{KotlinCode}[numbers=none, caption={Bytecode zum Aufruf der \texttt{println} Funktion von Java}]
+\begin{KotlinCode}[numbers=none, caption={Bytecode zum Aufruf der \texttt{println} Funktion von Java},label=lst:impl_println]
 private fun generate(printFunction: PrintFunction, scope: Scope) {
     val expression = printFunction.message
     mv.visitFieldInsn(Opcodes.GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;")

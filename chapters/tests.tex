@@ -1,16 +1,14 @@
 \chapter{Tests}
 \label{cha:tests}
 
-Um die Funktionalität von \toya zu gewährleisten, sind Tests zu vollziehen. Diese Tests verlaufen in drei Schritte, wie folgt:
+Um die Funktionalität von \toya zu gewährleisten, sind Tests zu vollziehen. Diese Tests umfassen die folgenden drei Schritte:
 \begin{enumerate}
     \item Programmcode in \toya schreiben
-    \item Den kompilierten Bytecode analysieren
+    \item Den übersetzten Bytecode analysieren
     \item Die Ausgabe des Programms überprüfen
 \end{enumerate}
 
-Die Analyse des Bytecode erfolgt mit dem, in der JDK inkludierten Werkzeug \texttt{javap}. Dieses erlaubt es, den Bytecode einer \texttt{class}-Datei in einer für Menschen leserlichen Form auszugeben. Der Aufruf erfolgt über die Kommandozeile im Format: \texttt{javap -c Main.class}. Das Argument \texttt{-c} zeigt zusätzlich die Bytecode Befehle innerhalb der Methoden an. Die Ausführung der Programme erfolgt über die Kommandozeile mit dem Befehl \texttt{java Main}.
-
-Insgesamt gilt es, die einzelnen Sprachkonstrukte, wie zum Beispiel For-Schleifen und Variablendeklaration und anschließend umfangreichere Programme zu testen.
+Die Analyse des Bytecode erfolgt mit dem, in der JDK inkludierten Werkzeug \texttt{javap}. Dieses erlaubt es, den Bytecode einer class-Datei in einer für Menschen leserlichen Form auszugeben. Der Aufruf erfolgt über die Kommandozeile im Format: \texttt{javap -c Main.class}. Der Parameter \texttt{-c} zeigt zusätzlich die Bytecode Befehle innerhalb der Methoden an. Die Ausführung der Programme erfolgt über die Kommandozeile mit dem Befehl \texttt{java Main}. Insgesamt gilt es, die einzelnen Sprachkonstrukte und anschließend ein umfangreicheres Programm zu testen.
 
 \section{Hello World}
 
@@ -41,7 +39,7 @@ Hello World
 
 Der zweite Test beschäftigt sich mit der Verwendung von Funktionen und dem Arbeiten mit Funktionsergebnissen.~\autoref{lst:test_2_source} zeigt den Quelltext des Programms. Als erstes ruft dieser Test die \texttt{title} Funktion auf. Diese Funktion gibt die Zeichenkette \textit{This is an addition:} auf der Konsole aus. Anschließend ruft das Programm die \texttt{print} Funktion mit dem Ergebnis der \texttt{add} Funktion auf. Die \texttt{add} Funktion addiert in diesem Fall die ganzzahligen Wertliterale \texttt{1} und \texttt{2}. Dementsprechend gibt die \texttt{print} Funktion den Wert \texttt{3} auf der Konsole aus, wie in~\autoref{lst:test_2_output} zu sehen ist.
 
-Der erste Test behandelt die Ausgabe via der \texttt{print} Funktion, daher wird an dieser Stelle nicht näher darauf eingegangen. Die \texttt{add} Funktion lädt mit den Opcodes \texttt{iload\_0} und \texttt{iload\_1} die beiden ganzzahligen Parameter der Funktion. \texttt{iadd} addiert anschließend die beiden Werte und liefert diese mit \texttt{ireturn} zurück. Der vollständige Bytecode für die drei Funktionen ist in~\autoref{lst:test_2_bytecode} zu sehen.
+Der erste Test behandelte die Ausgabe via der \texttt{print} Funktion bereits. Daher wird an dieser Stelle nicht näher darauf eingegangen. Die \texttt{add} Funktion lädt mit den Opcodes \texttt{iload\_0} und \texttt{iload\_1} die beiden ganzzahligen Parameter der Funktion. \texttt{iadd} addiert anschließend die beiden Werte und liefert diese mit \texttt{ireturn} zurück. Der vollständige Bytecode für die drei Funktionen ist in~\autoref{lst:test_2_bytecode} zu sehen.
 
 \begin{ToyaCode}[numbers=none, caption={Funktionen},label=lst:test_2_source]
 function title() {
@@ -95,7 +93,7 @@ This is an addition:
 
 Der dritte Test behandelt die Deklaration und Initialisierung von Variablen. Als erstes wird eine Variable pro Typ mit Wertliteralen und eine weitere Variable mit einem Funktionsergebnis angelegt, wie in~\autoref{lst:test_3_source} zu sehen ist. Anschließend wird jeder Wert auf der Konsole ausgegeben, siehe dazu~\autoref{lst:test_3_output}.
 
-Die beiden Opcodes \texttt{<type>load} und \texttt{<type>store} laden und speichern respektive den Wert einer lokalen Variable. Der Bytecode ist unter~\autoref{lst:test_3_bytecode} zu sehen.
+Die beiden Opcodes \texttt{<type>load} und \texttt{<type>store} laden und speichern den Wert einer lokalen Variable. Der Bytecode ist unter~\autoref{lst:test_3_bytecode} zu sehen.
 
 \begin{ToyaCode}[numbers=none, caption={Variablen},label=lst:test_3_source]
 function someFunction() -> int {
@@ -165,9 +163,9 @@ true
 
 \section{Felder}
 
-Der vierte Test behandelt die Deklaration, Initialisierung und den Zugriff auf Felder. Der Quelltext ist in~\autoref{lst:test_4_source} zu sehen. Das Programm legt an erster Stelle ein acht Elemente großes Feld vom Typ \texttt{int} an. Dem Index \texttt{3} wird das Wertliteral \texttt{15} zugewiesen. Anschließend gibt das Programm die Indizes \texttt{3} und \texttt{4} auf der Konsole aus. Wie erwartet liegt in \texttt{arr[3]} der Wert \texttt{15} und in \texttt{arr[4]} der Wert \texttt{0}, wie an der Konsolenausgabe in~\autoref{lst:test_4_output} zu sehen ist. Primitive Werte haben in Java immer einen Standardwert, was bei Ganzzahlen \texttt{0} ist. Obwohl \texttt{arr[4]} kein Wert zugewiesen wurde, ist daher trotzdem \texttt{0} auf der Konsole zu sehen.
+Der vierte Test behandelt die Deklaration, Initialisierung und den Zugriff auf Felder. Der Quelltext ist in~\autoref{lst:test_4_source} zu sehen. Das Programm legt zuerst ein acht Elemente großes Feld vom Typ \texttt{int} an. Dem Index \texttt{3} wird das Wertliteral \texttt{15} zugewiesen. Anschließend gibt das Programm die Indizes \texttt{3} und \texttt{4} auf der Konsole aus. Wie erwartet liegt in \texttt{arr[3]} der Wert \texttt{15} und in \texttt{arr[4]} der Wert \texttt{0}, wie an der Konsolenausgabe in~\autoref{lst:test_4_output} zu sehen ist. Primitive Werte haben in Java immer einen Standardwert, was bei Ganzzahlen \texttt{0} ist. Obwohl \texttt{arr[4]} kein Wert zugewiesen wurde, ist daher trotzdem \texttt{0} auf der Konsole zu sehen.
 
-Der Opcode \texttt{newarray} legt ein neues Feld an. Mit den Opcodes \texttt{iaload} und \texttt{iastore} ist der Zugriff auf Elemente des Feldes möglich. Der Bytecode ist in~\autoref{lst:test_4_bytecode} zu sehen.
+Der Opcode \texttt{newarray} legt ein neues Feld an. Mit den Opcodes \texttt{iaload} und \texttt{iastore} ist das Laden und Speichern von Elementen des Feldes möglich. Der Bytecode ist in~\autoref{lst:test_4_bytecode} zu sehen.
 
 \begin{ToyaCode}[numbers=none, caption={Felder},label=lst:test_4_source]
 function main(args: string[]) {
@@ -271,7 +269,7 @@ true branch
 
 \section{For-Schleifen}
 
-Der sechste Test behandelt For-Schleifen. Der Schleifenkopf initialisert und deklariert eine Zählvariable \texttt{i} mit dem Wert \texttt{0}. Nach jedem Schleifendurchlauf prüft die Abbruchbedingung, ob \texttt{i} den Wert der zuvor angelegten Variable \texttt{n} überschreitet. \texttt{n} wurde mit dem Wert \texttt{200} initialisert. Der Wert von \texttt{i} erhöht sich nach jedem Schleifendurchlauf um zehn. Im Schleifenkörper befindet sich eine \texttt{print}-Anweisung, die den Wert der Zählvariable auf der Konsole ausgibt. Der Quelltext ist in~\autoref{lst:test_6_source} zu sehen. Neben If-Verzweigungen sind \texttt{goto} Anweisungen auch bei For-Schleifen in Verwendung. Nach jedem Schleifendurchlauf springt das Programm zur Abbruchbedingung zurück. Evaluiert die Abbruchbedingung zu \texttt{true}, springt das Programm zum \texttt{return} und beendet die Ausführung. Der Bytecode ist unter~\autoref{lst:test_6_bytecode} zu sehen. Auf der Konsole sind die Werte von 0 bis 200 in zehner Inkrementen zu sehen. Die Ausgabe ist in~\autoref{lst:test_6_output} zu finden.
+Der sechste Test behandelt For-Schleifen. Der Schleifenkopf initialisert und deklariert eine Zählvariable \texttt{i} mit dem Wert \texttt{0}. Nach jedem Schleifendurchlauf prüft die Abbruchbedingung, ob \texttt{i} den Wert der zuvor angelegten Variable \texttt{n} überschreitet. \texttt{n} wurde mit dem Wert \texttt{200} initialisert. Der Wert von \texttt{i} erhöht sich nach jedem Schleifendurchlauf um zehn. Im Schleifenkörper befindet sich eine \texttt{print}-Anweisung, die den Wert der Zählvariable auf der Konsole ausgibt. Der Quelltext ist in~\autoref{lst:test_6_source} zu sehen. Neben If-Verzweigungen verwenden auch For-Schleifen \texttt{goto} Anweisungen. Nach jedem Schleifendurchlauf springt das Programm zur Abbruchbedingung zurück. Evaluiert die Abbruchbedingung zu \texttt{true}, springt das Programm zum \texttt{return} und beendet die Ausführung. Der Bytecode ist unter~\autoref{lst:test_6_bytecode} zu sehen. Auf der Konsole sind die Werte von 0 bis 200 in zehner Inkrementen zu sehen. Die Ausgabe ist in~\autoref{lst:test_6_output} zu sehen.
 
 \begin{ToyaCode}[numbers=none, caption={For-Schleifen},label=lst:test_6_source]
 function main(args: string[]) {

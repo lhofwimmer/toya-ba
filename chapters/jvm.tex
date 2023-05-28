@@ -1,20 +1,19 @@
 \chapter{JVM und Bytecode}
 \label{cha:jvm}
 
-Die Java Virtual Machine (JVM) ist eine von James Gosling für Sun konzipierte und in Folge von Oracle weiterentwickelte Stack-basierte virtuelle Maschine. Die JVM ermöglicht die Ausführung von Bytecode unter Linux, MacOS und Windows. Zu Beginn für die plattformunabhängige Ausführung von Java-Code entwickelt, existieren eine Vielzahl an Programmiersprachen für die JVM. Dazu gehören neben Java unter anderem Kotlin/JVM, Scala und Clojure.
-Als Grundlage für dieses Kapitel dient \textcite{lindholm2016java}.
+Die Java Virtual Machine (JVM) ist eine von James Gosling für Sun konzipierte und in Folge von Oracle weiterentwickelte Stack-basierte virtuelle Maschine. Die JVM ermöglicht die Ausführung von Bytecode unter Linux, MacOS und Windows. Zu Beginn für die plattformunabhängige Ausführung von Java-Code entwickelt, existieren mittlerweile eine Vielzahl an Programmiersprachen für die JVM. Dazu gehören neben Java unter anderem Kotlin/JVM, Scala und Clojure. Als Grundlage für dieses Kapitel dient \textcite{lindholm2016java}.
 
 \section{HotSpot}
 
 Neben der Übersetzung von Bytecode auf Maschinencode beinhaltet die JVM auch den \textit{Just-in-Time (JIT)} Compiler \textit{HotSpot}. Sobald die Anzahl der Aufrufe einer bestimmten Methode den Schwellwert überschreitet, übersetzt \textit{HotSpot} diese Methode in Maschinencode und ersetzt den originalen Bytecode für die restliche Ausführung des Programmes. Startet man das Programm neu, beginnt dieser Prozess von vorne. Dieser Prozess hat das Ziel, häufig verwendete Methoden zu optimieren, um dadurch die Laufzeit-Performanz zu erhöhen. Der Name stammt vom Gedanken, dass \textit{HotSpot} heiße Regionen (engl. \textit{hotspots}), also oft aufgerufene Methoden optimieren soll.
 
-\textit{HotSpot} bietet zwei Stufen des \textit{JIT Compilers} an: Client (C1) und Server (C2) \parencite{jvmhotspot}. Der Client Compiler ist auf eine schnelle Startzeit optimiert und versucht das Programm so schnell wie möglich zu optimieren. Der Server Compiler hingegen ist auf eine hohe Leistung optimiert, weshalb das Optimierungsverfahren länger dauert, aber dafür eine höhere Programm-Performanz als Folge hat. Um nun die Vorteile von beiden Stufen ausnutzen zu können, tritt der C1 Compiler früher als der C2 Compiler in Kraft und erst sobald ein höherer Schwellwert erreicht ist, kommt es zur Optimierung durch den C2 Compiler. Die JIT-Optimierung ist in fünf Stufen aufgeteilt:
+\textit{HotSpot} bietet zwei Stufen des \textit{JIT Compilers} an: Client (C1) und Server (C2) \parencite{jvmhotspot}. Der Client Compiler ist auf eine schnelle Startzeit optimiert und versucht das Programm so schnell wie möglich zu optimieren. Der Server Compiler hingegen ist auf eine hohe Leistung optimiert, weshalb dessen Optimierungsverfahren länger dauert, aber dafür eine höhere Programm-Performanz erzielt. Um nun die Vorteile von beiden Stufen ausnutzen zu können, tritt der C1 Compiler vor dem C2 Compiler in Kraft. Erst sobald ein höherer Schwellwert erreicht ist, kommt es zur Optimierung durch den C2 Compiler. Die JIT-Optimierung ist in fünf Stufen aufgeteilt:
 \begin{itemize}
     \item \textbf{Stufe 0}: Die JVM nimmt keine Optimierungen vor, erhebt aber Statistiken für die Optimierung in den weiteren Stufen.
     \item \textbf{Stufe 1} (C1): Die JVM kompiliert triviale Methoden, erhebt in dieser Stufe aber keine Statistiken.
-    \item \textbf{Stufe 2} (C1): Die JVM verwendet diese Stufe, um sobald wie möglich die Performanz zu erhöhen und wenn die Schlange für die C2 Optimierung voll ist. Aus diesem Grund liegt der Methodenaufruf-Schwellwert dieser Stufe bei 0. Im weiteren Verlauf verwendet die JVM die dritte Stufe, um das Ergebnis dieser Stufe noch weiter zu optimieren.
+    \item \textbf{Stufe 2} (C1): Die JVM verwendet diese Stufe, um sobald wie möglich die Performanz zu erhöhen. Aus diesem Grund liegt der Methodenaufruf-Schwellwert dieser Stufe bei 0. Im weiteren Verlauf verwendet die JVM die dritte Stufe, um das Ergebnis von Stufe 2 noch weiter zu optimieren.
     \item \textbf{Stufe 3} (C1): Dies ist die Standardstufe, welche am häufigsten in Verwendung ist. \textit{HotSpot} optimiert Methoden anhand gesammelter Statistiken, ignoriert jedoch triviale Methoden. Der Schwellwert dieser Stufe liegt bei 2000 Methodenaufrufen.
-    \item \textbf{Stufe 4} (C2): Dies ist die einzige Stufe, bei der der C2 Compiler zum Einsatz kommt. Die Optimierung hierbei ist aufwändiger, liefert jedoch den am höchsten optimierten Code als Ergebnis. Der Schwellwert, um diese Stufe zu erreichen, liegt mit 15 000 Methodenaufrufe am höchsten.
+    \item \textbf{Stufe 4} (C2): Dies ist die einzige Stufe, bei der der C2 Compiler zum Einsatz kommt. Die Optimierung hierbei ist aufwändiger, liefert jedoch den am besten optimierten Code als Ergebnis. Der Schwellwert, um diese Stufe zu erreichen, liegt mit 15 000 Methodenaufrufe am höchsten.
 \end{itemize}
 
 Entscheidet sich die Entwickler:in gegen Verwendung der gestuften Kompilierung, liegt der Optimierungs-Schwellwert bei 10 000 Methodenaufrufen. Mit dem Parameter \texttt{-XX:-TieredCompilation} besteht die Möglichkeit, gestufte Kompilierung zu deaktivieren.
@@ -25,17 +24,17 @@ Die Aufgabe des \textit{Classloaders} ist es, Klassen bei Bedarf dynamisch währ
 
 \section{Laufzeitdatenbereiche}
 
-Der Laufzeitdatenbereich dient zum Speichern von Variablen, Objekten und Methoden. Ebenso umfasst es Strukturen, die Informationen über den momentanen Zustand eines Programmes enthalten. Die Architektur der JVM hinsichtlich der Laufzeitdatenbereiche ist in~\autoref{fig:jvm-architecture} zu sehen.
+Der Laufzeitdatenbereich dient zum Speichern von Variablen, Methoden und Objekten. Ebenso umfasst es Strukturen, die Informationen über den momentanen Zustand eines Programmes enthalten. Die Architektur der JVM hinsichtlich der Laufzeitdatenbereiche ist in~\autoref{fig:jvm-architecture} zu sehen.
 
 Die JVM unterstützt die Erzeugung einer beliebigen Anzahl an Threads. Jeder dieser Threads besitzt ein \texttt{pc} Register, welches die Adresse der momentan ausgeführten Anweisung enthält.
 
-Sowie jeder Thread ein \texttt{pc} Register besitzt, besitzt auch jeder Thread einen \textit{Java Virtual Machine stack} (von hier an Stack genannt). Dieser Stack stellt einen Stapel von \textit{Frames} dar. Frames sind Elemente variabler Größe und speichern lokale Variablen und partielle Ergebnisse. Stacks können sowohl mit einer fixen Größe, als auch dynamisch nach Bedarf der JVM definiert sein. Übersteigt die benötigte Stack-Größe die maximal erlaubte Größe, so kommt es zu einem \texttt{StackOverflowError}.
+Ebenso besitzt jeder Thread einen \textit{Java Virtual Machine stack} (von hier an Stack genannt). Dieser Stack stellt einen Stapel von \textit{Frames} dar. Frames sind Elemente variabler Größe und speichern unter anderem lokale Variablen und partielle Ergebnisse. Stacks können sowohl mit einer fixen Größe, als auch dynamisch nach Bedarf der JVM definiert sein. Übersteigt die benötigte Stack-Größe die maximal erlaubte Größe, so kommt es zu einem \texttt{StackOverflowError}.
 
-Zusätzlich zum Stack besitzt die JVM auch noch den Heap, ein Speicherbereich, den sich im Gegensatz zu \texttt{pc} Register und Stack alle Threads teilen. Im Heap liegen alle Felder und Klassen-Instanzen. Die JVM verfügt über eine automatische Speicherbereinigung, wenn Objekte nicht mehr benötigt werden: Der sogenannte \textit{Garbage Collector}. Deshalb gibt es auch keine Mechanismen, Speicherplatz von Objekten freizugeben.
+Zusätzlich zum Stack besitzt die JVM auch noch den Heap, ein Speicherbereich, den sich im Gegensatz zu \texttt{pc} Register und Stack alle Threads teilen. Im Heap liegen alle Felder und Klassen-Instanzen. Die JVM verfügt über eine automatische Speicherbereinigung, wenn Objekte nicht mehr benötigt werden: Der sogenannte \textit{Garbage Collector}. Deshalb gibt es auch keine Mechanismen, Speicherplatz von Objekten manuell freizugeben.
 
 Im Methodenbereich liegen Strukturen, wie zum Beispiel der Bereich für Laufzeitkonstanten (\textit{Run\-Time Constant Pool}), Klassenvariablen, Methoden und Inhalt der Methoden. Im Bereich für Laufzeitkonstanten liegen Wertliterale und Referenzen auf Methoden und Klassen und dient als eine Art Tabelle, aus welcher das Programm Werte referenzieren kann.  Der Methodenbereich stellt einen Unterbereich des Heaps dar, muss aber im Gegensatz zum Heap nicht zwingend der automatischen Speicherbereinigung unterliegen.
 
-Um Interoperabilität mit anderen Programmiersprachen zu gewährleisten, benötigt es den nativen Methoden Stack. Native Methoden innerhalb dieses Stacks sind unabhängig von Restriktionen der JVM, können jedoch auf deren Datenbereiche zugreifen. Kommt es zum Aufruf einer nativen Methode, so wechselt die JVM vom herkömmlichen Stack zum nativen Methoden Stack, führt diese Methode aus und liefert, wenn vorhanden, ein Ergebnis zurück.
+Um Interoperabilität mit anderen Programmiersprachen zu gewährleisten, benötigt es den nativen Methoden Stack. Native Methoden innerhalb dieses Stacks sind unabhängig von Restriktionen der JVM, können jedoch weiterhin auf deren Datenbereiche zugreifen. Kommt es zum Aufruf einer nativen Methode, wechselt die JVM vom herkömmlichen Stack zum nativen Methoden Stack, führt diese Methode aus und liefert, wenn vorhanden, ein Ergebnis zurück.
 
 \begin{figure}
     \caption{Architektur der JVM Laufzeitdatenbereiche}
@@ -48,7 +47,7 @@ Um Interoperabilität mit anderen Programmiersprachen zu gewährleisten, benöti
 
 Da die JVM nicht direkt den Code von JVM-basierten Programmiersprachen lesen kann, benötigt es eine Zwischensprache, den Bytecode. Dieser Bytecode entsteht bei der Übersetzung von JVM-basierten Programmiersprachen. Die class-Dateien, die bei der Übersetzung des Quelltextes erzeugt werden, enthalten als Resultat diesen Bytecode innerhalb der Methodenrümpfe.
 
-Eine Anweisung des Bytecodes besteht aus einem Opcode, auch \textit{mnemonic} genannt, gefolgt von keinem oder mehr Operanden. Oft folgen dem Opcode keine Operanden.~\autoref{lst:jvm_bytecodeloop} zeigt die illustrative Schleife, die den Bytecode interpretiert, \cite[siehe S. 25]{lindholm2016java}.
+Eine Anweisung des Bytecodes besteht aus einem Opcode, auch \textit{mnemonic} genannt, gefolgt von keinem oder mehr Operanden. Oft folgen dem Opcode keine Operanden.~\autoref{lst:jvm_bytecodeloop} zeigt die illustrative Schleife, die den Bytecode interpretiert, \parencite[siehe S. 25]{lindholm2016java}.
 
 \begin{JavaCode}[numbers=none, caption={Auszug aus der JVM Spezifikation, welche die Interpretationsschleife für Bytecode repräsentiert.}, label=lst:jvm_bytecodeloop]
 do {
@@ -62,7 +61,7 @@ Opcodes sind für die verschiedenen Typen der JVM separat implementiert. Will di
 
 Einige Opcodes, \texttt{iload} unter anderem, haben zusätzliche Varianten, die einen Suffix im Format \texttt{\_<number>} enthalten. Das Verhalten dieser Opcodes unterscheidet sich nicht von den suffixlosen Varianten, sondern dient als Speicherplatzsparmaßnahme. Die Zahl am Ende des Suffixes stellt den Index im lokalen Variablenfeld dar, auf das der Opcode zugreift. Dadurch vermeidet die JVM die Notwendigkeit eines zusätzlichen Parameters für häufig verwendete Indizes und spart ein Byte Speicherplatz.  Die Anzahl an Varianten ist je nach Opcode unterschiedlich. \texttt{iload} bietet zum Beispiel \texttt{iload\_0} bis \texttt{iload\_3}. 
 
-Da es sich dabei um zwei verschiedene Typen handelt, konvertiert man den kleineren Typ (in diesem Fall \texttt{int}) zum größeren Typ mit dem Opcode \texttt{i2d}. Vom Namen lässt sich ableiten, dass diese Anweisung die Ganzzahl zu einer Gleitkommazahl konvertiert. Wichtig hierbei ist, dass der zu konvertierende Wert oben am Operanden-Stack aufliegen muss, da die Operation \texttt{i2d} den obersten Wert des Operanden-Stack entnimmt und den konvertierten Wert anschließend zurücklegt.
+Da es sich bei den Operanden der Addition um zwei verschiedene Typen handelt, konvertiert man den kleineren Typ (in diesem Fall \texttt{int}) zum größeren Typ mit dem Opcode \texttt{i2d}. Vom Namen lässt sich ableiten, dass diese Anweisung die Ganzzahl zu einer Gleitkommazahl konvertiert. Wichtig hierbei ist, dass der zu konvertierende Wert oben am Operanden-Stack aufliegen muss, da die Operation \texttt{i2d} den obersten Wert des Operanden-Stack entnimmt und den konvertierten Wert anschließend zurücklegt.
 
 Mit zwei Gleitkommawerten kann man nun anschließend \texttt{dadd} aufrufen. Diese Operation entnimmt die beiden obersten Werte dem Operanden-Stack, errechnet die Summe und legt diese anschließend wieder auf den Operanden-Stack.
 
